@@ -152,6 +152,10 @@ class RadixCache():
         self.total_requested_tokens = 0
         self.total_hit_tokens = 0
 
+        # Interval-delta tracking for time-series analysis
+        self._last_snapshot_requested = 0
+        self._last_snapshot_hit = 0
+
         if self.page_size == 1:
             self.key_match_fn = _key_match_page_size1
             self.get_child_key_fn = lambda key: key[0]
@@ -317,6 +321,15 @@ class RadixCache():
 
     def return_prefix_info(self):
         return self.total_requested_tokens, self.total_hit_tokens
+
+    def get_interval_hit_rate(self):
+        """Return (interval_requested, interval_hit, interval_hit_rate) since last call, then reset snapshot."""
+        req_delta = self.total_requested_tokens - self._last_snapshot_requested
+        hit_delta = self.total_hit_tokens - self._last_snapshot_hit
+        self._last_snapshot_requested = self.total_requested_tokens
+        self._last_snapshot_hit = self.total_hit_tokens
+        rate = (hit_delta / req_delta * 100.0) if req_delta > 0 else 0.0
+        return req_delta, hit_delta, rate
 
     def pretty_print(self):
         self._print_helper(self.root_node, 0)

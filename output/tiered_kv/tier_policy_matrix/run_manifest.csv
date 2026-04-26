@@ -1,0 +1,2 @@
+tier,policy,workload,returncode,status,output_dir,result_csv,tier_stats_json,stdout_log
+cpu_dram,harp,sharegpt_1000,0,dry_run,/home/marvell/LLMServingSim/output/tiered_kv/tier_policy_matrix/cpu_dram/harp/sharegpt_1000,/home/marvell/LLMServingSim/output/tiered_kv/tier_policy_matrix/cpu_dram/harp/sharegpt_1000/result.csv,/home/marvell/LLMServingSim/output/tiered_kv/tier_policy_matrix/cpu_dram/harp/sharegpt_1000/result_tier_stats.json,/home/marvell/LLMServingSim/output/tiered_kv/tier_policy_matrix/cpu_dram/harp/sharegpt_1000/output.txt

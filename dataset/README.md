@@ -42,8 +42,25 @@ Example:
 Use `sharegpt_parser.py` to convert ShareGPT conversation data into the `.jsonl` format:
 
 ```bash
-python dataset/sharegpt_parser.py
+python dataset/sharegpt_parser.py --max-requests 300 --tokenizer-preset llama
 ```
+
+Large ShareGPT traces for policy sweeps:
+
+```bash
+python dataset/sharegpt_parser.py --max-requests 750 --tokenizer-preset llama
+python dataset/sharegpt_parser.py --max-requests 1000 --tokenizer-preset llama
+python dataset/sharegpt_parser.py --max-requests 1500 --tokenizer-preset llama
+```
+
+These commands generate:
+
+- `dataset/sharegpt_req750_rate10_llama.jsonl`
+- `dataset/sharegpt_req1000_rate10_llama.jsonl`
+- `dataset/sharegpt_req1500_rate10_llama.jsonl`
+
+Use `--tokenizer-preset phi` or `--tokenizer-preset mixtral` to create tokenizer-specific
+variants for model sweeps.
 
 To create a dataset manually, write JSON objects to a `.jsonl` file following the format
 above and pass the file path via `--dataset` in `main.py`.

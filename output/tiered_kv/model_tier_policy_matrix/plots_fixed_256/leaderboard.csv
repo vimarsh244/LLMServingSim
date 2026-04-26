@@ -1,0 +1,3 @@
+model,tier,policy,mean_ttft_ms,mean_tpot_ms,tier_transition_mb_total,composite_score
+phi_moe,cxl,evicpress,122295.19542877734,112.713871375,47900.0,0.0
+phi_moe,cxl,oldest,572083.9462813906,655.3390459257812,57972.0,1.0

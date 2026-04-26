@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">HARP KV Eviction Policy Flow</title>
+  <desc id="desc">Flowchart showing HARP eviction decision scoring, action selection, and decode-time prefetch overlap behavior.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f4f8ff"/>
+      <stop offset="100%" stop-color="#eef9f1"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#3a4a66"/>
+    </marker>
+    <style>
+      .title { font: 700 34px 'DejaVu Sans', Arial, sans-serif; fill: #22324d; }
+      .subtitle { font: 500 18px 'DejaVu Sans', Arial, sans-serif; fill: #35507a; }
+      .lane { fill: #ffffff; stroke: #d3dfef; stroke-width: 2; }
+      .laneTitle { font: 700 20px 'DejaVu Sans', Arial, sans-serif; fill: #2f4366; }
+      .box { fill: #fdfefe; stroke: #8ea6c8; stroke-width: 2; rx: 14; ry: 14; }
+      .boxBlue { fill: #eff5ff; stroke: #7298d8; }
+      .boxGreen { fill: #effaf1; stroke: #69af78; }
+      .boxGold { fill: #fff7e8; stroke: #d2a44f; }
+      .textHead { font: 700 16px 'DejaVu Sans', Arial, sans-serif; fill: #1f2f4b; }
+      .textBody { font: 500 13px 'DejaVu Sans', Arial, sans-serif; fill: #2d3d5c; }
+      .formula { font: 600 13px 'DejaVu Sans Mono', 'Courier New', monospace; fill: #1f2f4b; }
+      .arrow { stroke: #3a4a66; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .note { font: 500 12px 'DejaVu Sans', Arial, sans-serif; fill: #455a7f; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1400" height="900" fill="url(#bg)"/>
+
+  <text x="58" y="64" class="title">HARP Eviction Policy: Decision and Runtime Flow</text>
+  <text x="58" y="94" class="subtitle">Hierarchical Adaptive Residual Prefetch (NPU -> CXL/CPU with compression + grace window)</text>
+
+  <rect x="50" y="125" width="620" height="730" class="lane"/>
+  <text x="74" y="158" class="laneTitle">A) Eviction-Time Decision</text>
+
+  <rect x="90" y="190" width="540" height="90" class="box boxBlue"/>
+  <text x="110" y="220" class="textHead">1) Trigger</text>
+  <text x="110" y="243" class="textBody">NPU KV memory is full while scheduling decode requests.</text>
+  <text x="110" y="264" class="textBody">Build candidate pool from active decode requests (tail-compatible ordering).</text>
+
+  <rect x="90" y="315" width="540" height="130" class="box boxBlue"/>
+  <text x="110" y="345" class="textHead">2) Enumerate candidate actions per request</text>
+  <text x="110" y="368" class="textBody">Action tuple a = (target tier, compression ratio, grace tokens).</text>
+  <text x="110" y="389" class="textBody">Target tier: CXL first if available, else CPU.</text>
+  <text x="110" y="410" class="textBody">Ratios default: [1.0, 0.75, 0.5, 0.25]; grace defaults: [16, 32, 64].</text>
+
+  <rect x="90" y="480" width="540" height="165" class="box boxGold"/>
+  <text x="110" y="510" class="textHead">3) Score each action and pick minimum score</text>
+  <text x="110" y="536" class="formula">score = lambda_stall*stall + lambda_quality*quality + lambda_fairness*(debt/max(freed_bytes, eps))</text>
+  <text x="110" y="560" class="textBody">stall: max(prefetch_time - grace_time, 0)</text>
+  <text x="110" y="581" class="textBody">quality: sensitivity(request) * compression_penalty(ratio)</text>
+  <text x="110" y="602" class="textBody">fairness: raises cost for repeatedly evicting the same request.</text>
+  <text x="110" y="623" class="textBody">Tie-breakers: prefer larger raw bytes freed, then smaller stored bytes.</text>
+
+  <rect x="90" y="680" width="540" height="145" class="box boxGreen"/>
+  <text x="110" y="710" class="textHead">4) Apply chosen action</text>
+  <text x="110" y="733" class="textBody">Free raw bytes from NPU; allocate compressed bytes on CXL/CPU.</text>
+  <text x="110" y="754" class="textBody">Set request state to SHADOW if grace tail kept, else COLD.</text>
+  <text x="110" y="775" class="textBody">Start background prefetch bookkeeping and update fairness debt.</text>
+
+  <rect x="730" y="125" width="620" height="730" class="lane"/>
+  <text x="754" y="158" class="laneTitle">B) Decode-Time Runtime Behavior</text>
+
+  <rect x="770" y="190" width="540" height="110" class="box boxBlue"/>
+  <text x="790" y="220" class="textHead">5) Continuous background prefetch progress</text>
+  <text x="790" y="243" class="textBody">Each scheduler tick moves bytes from CXL/CPU toward NPU readiness.</text>
+  <text x="790" y="264" class="textBody">Tracks overlapped bytes when grace tokens are still active.</text>
+  <text x="790" y="285" class="textBody">If transfer completes, prefetch_remaining becomes zero.</text>
+
+  <rect x="770" y="335" width="540" height="120" class="box boxBlue"/>
+  <text x="790" y="365" class="textHead">6) Admission control for next decode step</text>
+  <text x="790" y="388" class="textBody">If prefetch_remaining == 0 OR grace_tokens > 0: request is schedulable.</text>
+  <text x="790" y="409" class="textBody">Else request stalls; stall time/event counters are incremented.</text>
+  <text x="790" y="430" class="textBody">This is where HARP avoids hard stalls when overlap succeeds.</text>
+
+  <rect x="770" y="490" width="540" height="130" class="box boxGold"/>
+  <text x="790" y="520" class="textHead">7) On each decode token</text>
+  <text x="790" y="543" class="textBody">Update token-time EMA used in future stall predictions.</text>
+  <text x="790" y="564" class="textBody">If request is SHADOW: count shadow-hit token and decrement grace.</text>
+  <text x="790" y="585" class="textBody">When grace reaches zero, state transitions SHADOW -> COLD.</text>
+
+  <rect x="770" y="655" width="540" height="170" class="box boxGreen"/>
+  <text x="790" y="685" class="textHead">8) Completion and metrics</text>
+  <text x="790" y="708" class="textBody">On request finish: free resident NPU bytes and any leftover tier bytes.</text>
+  <text x="790" y="729" class="textBody">Logs per-request and tier-level metrics:</text>
+  <text x="790" y="750" class="textBody">stall_time, stall_events, shadow_hit_tokens, overlap_ratio, avg_shadow_ratio.</text>
+  <text x="790" y="771" class="note">These metrics quantify whether grace+prefetch actually hid latency.</text>
+
+  <path class="arrow" d="M 360 280 L 360 315"/>
+  <path class="arrow" d="M 360 445 L 360 480"/>
+  <path class="arrow" d="M 360 645 L 360 680"/>
+
+  <path class="arrow" d="M 630 752 L 770 752"/>
+
+  <path class="arrow" d="M 1040 300 L 1040 335"/>
+  <path class="arrow" d="M 1040 455 L 1040 490"/>
+  <path class="arrow" d="M 1040 620 L 1040 655"/>
+
+  <text x="58" y="882" class="note">Source implementation: inference_serving/eviction_policies/harp.py and inference_serving/scheduler.py</text>
+</svg>

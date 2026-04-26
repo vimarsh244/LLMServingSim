@@ -16,18 +16,70 @@ yaml.add_representer(FlowStyleList, represent_flowstyle_list)
 
 logger = get_logger("ConfigBuilder")
 
+
+def _warn_external_tier_assumptions(node_id, cpu_mem, external_tier_name, cxl_mem_size, external_tier_bw, external_tier_latency):
+    if cxl_mem_size <= 0:
+        return
+
+    tier_name = external_tier_name or "EXTERNAL"
+    cpu_mem_size = float(cpu_mem["mem_size"])
+    cpu_mem_bw = float(cpu_mem["mem_bw"])
+    cpu_mem_latency = float(cpu_mem["mem_latency"])
+
+    if cpu_mem_latency <= 0:
+        logger.warning(
+            "Node %d has cpu_mem.mem_latency=%.2f ns. Use a non-zero value (for example 80-150 ns) "
+            "for realistic external-tier comparisons.",
+            node_id,
+            cpu_mem_latency,
+        )
+
+    if external_tier_latency < cpu_mem_latency:
+        logger.warning(
+            "%s latency (%.2f ns) is lower than CPU DRAM latency (%.2f ns) on node %d. "
+            "This is usually unrealistic for a capacity tier.",
+            tier_name,
+            external_tier_latency,
+            cpu_mem_latency,
+            node_id,
+        )
+
+    if external_tier_bw > cpu_mem_bw:
+        logger.warning(
+            "%s bandwidth (%.2f GB/s) is higher than CPU DRAM bandwidth (%.2f GB/s) on node %d. "
+            "If this is not intentional, lower external tier bandwidth.",
+            tier_name,
+            external_tier_bw,
+            cpu_mem_bw,
+            node_id,
+        )
+
+    if cxl_mem_size <= cpu_mem_size:
+        logger.warning(
+            "%s capacity (%.2f GB) is not larger than CPU DRAM capacity (%.2f GB) on node %d. "
+            "Capacity tiers are typically configured larger than host DRAM.",
+            tier_name,
+            cxl_mem_size,
+            cpu_mem_size,
+            node_id,
+        )
+
 # parse cluster configuration from JSON file and build config file for astra-sim
 def build_cluster_config(astra_sim, cluster_config_path, enable_local_offloading=False, enable_attn_offloading=False):
-    cluster_config_path = f'../{cluster_config_path}' # move out from astra-sim folder
+    if os.path.isabs(cluster_config_path):
+        resolved_cluster_config_path = cluster_config_path
+    else:
+        # Move out from astra-sim folder for workspace-relative configs.
+        resolved_cluster_config_path = f'../{cluster_config_path}'
     
     try:
-        with open(cluster_config_path, 'r') as f:
+        with open(resolved_cluster_config_path, 'r') as f:
             cluster_config = json.load(f)
     except FileNotFoundError:
-        raise FileNotFoundError(f"Cluster configuration file '{cluster_config_path}' not found.")
+        raise FileNotFoundError(f"Cluster configuration file '{resolved_cluster_config_path}' not found.")
 
     except json.JSONDecodeError:
-        print(f"Failed to parse JSON from '{cluster_config_path}'.")
+        print(f"Failed to parse JSON from '{resolved_cluster_config_path}'.")
         exit(1)
 
     network_config_path = os.path.join(astra_sim, 'inputs/network/network.yml')
@@ -52,7 +104,29 @@ def build_cluster_config(astra_sim, cluster_config_path, enable_local_offloading
     mem_required_keys = ["mem_size", "mem_bw", "mem_latency"]
 
     cxl_mem_size = 0
-    if "cxl_mem" in cluster_config:
+    external_tier_bw = 0
+    external_tier_latency = 0
+    external_tier_name = None
+
+    if "external_kv_tier" in cluster_config and "cxl_mem" in cluster_config:
+        raise ValueError("Use either 'external_kv_tier' or 'cxl_mem', not both.")
+
+    if "external_kv_tier" in cluster_config:
+        cxl = cluster_config["external_kv_tier"]
+        for key in mem_required_keys:
+            if key not in cxl:
+                raise KeyError(f"Missing required key '{key}' in 'external_kv_tier' configuration.")
+        memory_config["cxl_mem"] = {
+            "memory-type": "MEMORY_POOL",
+            "mem-bw": cxl["mem_bw"],
+            "mem-latency": cxl["mem_latency"],
+            "num-devices": cxl.get("num_devices", 1)
+        }
+        cxl_mem_size = cxl["mem_size"]
+        external_tier_bw = cxl["mem_bw"]
+        external_tier_latency = cxl["mem_latency"]
+        external_tier_name = str(cxl.get("name", "EXTERNAL")).upper()
+    elif "cxl_mem" in cluster_config:
         cxl = cluster_config["cxl_mem"]
         for key in mem_required_keys:
             if key not in cxl:
@@ -64,6 +138,9 @@ def build_cluster_config(astra_sim, cluster_config_path, enable_local_offloading
             "num-devices": cxl.get("num_devices", 1)
         }
         cxl_mem_size = cxl["mem_size"]
+        external_tier_bw = cxl["mem_bw"]
+        external_tier_latency = cxl["mem_latency"]
+        external_tier_name = str(cxl.get("tier_name", "CXL")).upper()
 
     # Check if all required arguments are present in each node
     required_keys = ["num_instances", "cpu_mem", "instances"]
@@ -137,6 +214,8 @@ def build_cluster_config(astra_sim, cluster_config_path, enable_local_offloading
     block_mode_on = []
     power_configs = []
     cpu_mem_size = []
+    cpu_mem_bw = []
+    cpu_mem_latency = []
     cpu_mem_enabled = False  # only one type of cpu memory config is supported for now (latency & bandwidth)
     node_id = 0
     inst_id = 0
@@ -207,6 +286,17 @@ def build_cluster_config(astra_sim, cluster_config_path, enable_local_offloading
                     raise KeyError(f"Missing required key '{key}' in 'cpu_mem' configuration.")
                 
         cpu_mem_size.append(cpu_mem["mem_size"])
+        cpu_mem_bw.append(cpu_mem["mem_bw"])
+        cpu_mem_latency.append(cpu_mem["mem_latency"])
+
+        _warn_external_tier_assumptions(
+            node_id,
+            cpu_mem,
+            external_tier_name,
+            cxl_mem_size,
+            external_tier_bw,
+            external_tier_latency,
+        )
 
         if power_modeling: # add mem_size (dram size) to power config
             power = node_config["power"]
@@ -384,6 +474,7 @@ def build_cluster_config(astra_sim, cluster_config_path, enable_local_offloading
         "num_nodes": num_nodes,
         "num_instances": total_num_instances,
         "instances": total_instances,
+        "kv_eviction_policy": cluster_config.get("kv_eviction_policy", None),
         "inst2node_mapping": inst2node_mapping,
         "inst2npu_mapping": inst2npu_mapping,
         "npu2inst_mapping": npu2inst_mapping,
@@ -395,7 +486,12 @@ def build_cluster_config(astra_sim, cluster_config_path, enable_local_offloading
         "block_mode_on": block_mode_on,
         "total_npu": total_npu,
         "cpu_mem_size": cpu_mem_size,
+        "cpu_mem_bw": cpu_mem_bw,
+        "cpu_mem_latency": cpu_mem_latency,
         "cxl_mem_size": cxl_mem_size,
+        "external_tier_bw": external_tier_bw,
+        "external_tier_latency": external_tier_latency,
+        "external_tier_name": external_tier_name,
         "power_modeling": power_modeling,
         "power_configs": power_configs,
         "pim_models": pim_models
@@ -554,5 +650,7 @@ def _mem_str(loc, node_id):
         return f"REMOTE:{node_id}"
     elif loc.upper().startswith("CXL"):
         return loc.upper()
+    elif loc.upper().startswith("SSD") or loc.upper().startswith("NVME") or loc.upper().startswith("ETHERNET") or loc.upper().startswith("EXTERNAL"):
+        return "CXL:0"
     else:
         raise ValueError(f"Unknown memory placement name '{loc}'")

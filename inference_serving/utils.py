@@ -109,6 +109,29 @@ def print_input_config(args):
 
     def have(a): return hasattr(args, a)
 
+    is_dynmax = str(getattr(args, "kv_eviction_policy", "")).strip().lower() == "dynmax"
+
+    def harp_grace_display():
+        return "0" if is_dynmax else getattr(args, "harp_grace_candidates", None)
+
+    def harp_ratios_display():
+        return "1.0" if is_dynmax else getattr(args, "harp_ratios", None)
+
+    def harp_lambda_stall_display():
+        return 0.0 if is_dynmax else getattr(args, "harp_lambda_stall", None)
+
+    def harp_lambda_quality_display():
+        return 0.0 if is_dynmax else getattr(args, "harp_lambda_quality", None)
+
+    def harp_lambda_fairness_display():
+        return 0.0 if is_dynmax else getattr(args, "harp_lambda_fairness", None)
+
+    def harp_profile_display():
+        return "none" if is_dynmax else getattr(args, "harp_compression_profile", None)
+
+    def harp_trace_display():
+        return "" if is_dynmax else getattr(args, "harp_compression_trace", None)
+
     items = []
     def add(attr, label, conv=lambda v: v):
         if have(attr):
@@ -126,6 +149,24 @@ def print_input_config(args):
 
     add("request_routing_policy", "Request routing", _na)
     add("expert_routing_policy",  "Expert routing", _na)
+    add("kv_eviction_policy",     "KV eviction policy", _na)
+    add("evicpress_alpha",        "EVICPRESS alpha")
+    add("evicpress_ratios",       "EVICPRESS ratios", _na)
+    items.append(("HARP grace candidates", harp_grace_display()))
+    items.append(("HARP ratios", harp_ratios_display()))
+    items.append(("HARP lambda stall", harp_lambda_stall_display()))
+    items.append(("HARP lambda quality", harp_lambda_quality_display()))
+    items.append(("HARP lambda fairness", harp_lambda_fairness_display()))
+    add("harp_fairness_epsilon",  "HARP fairness epsilon")
+    items.append(("HARP compression profile", harp_profile_display()))
+    items.append(("HARP compression trace", harp_trace_display()))
+    add("adaptive_dynmax_schedule", "Adaptive DynMax schedule", _na)
+    add("adaptive_dynmax_progress_start", "Adaptive DynMax progress start")
+    add("adaptive_dynmax_progress_end", "Adaptive DynMax progress end")
+    add("adaptive_dynmax_final_trigger", "Adaptive DynMax final trigger")
+    add("adaptive_dynmax_final_target", "Adaptive DynMax final target")
+    add("adaptive_dynmax_final_steps_ahead", "Adaptive DynMax final steps ahead")
+    add("adaptive_dynmax_final_max_actions", "Adaptive DynMax final max actions")
     add("enable_prefix_caching",  "Prefix caching", _yn)
     add("prefix_storage", "Prefix caching scheme", _pc)
     add("enable_prefix_sharing",  "Centralized prefix caching", _yn)

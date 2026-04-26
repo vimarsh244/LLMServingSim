@@ -47,6 +47,7 @@ class MemoryModel():
         self.weight = self.get_weight() # assume weight is loaded
         self.npu_used = self.weight
         self.cpu_used = 0
+        self.cxl_used = 0  # byte-counter for KV cache evicted to CXL (non-prefix)
         if self.weight > self.npu_mem:
             raise RuntimeError(f"[MemoryModel] [node={self.node_id},inst={self.instance_id}]: Model size {self.weight*self.npu_num//GB_TO_BYTE}GB exceeds total NPU memory {self.npu_mem*self.npu_num//GB_TO_BYTE}GB")
 
@@ -244,7 +245,21 @@ class MemoryModel():
                 )
                 self.cpu_used += size
         elif device == Device.CXL:
-            self.second_tier_prefix_cache.allocate(size)
+            if self.enable_prefix_caching and hasattr(self, 'second_tier_prefix_cache'):
+                self.second_tier_prefix_cache.allocate(size)
+            else:
+                if self.cxl_used + size > self.cxl_mem:
+                    raise RuntimeError(
+                        f"[MemoryModel] [node_id={self.node_id},inst={self.instance_id}] CXL: tried to load {size / MB_TO_BYTE:.2f}MB "
+                        f"but only {(self.cxl_mem - self.cxl_used) / MB_TO_BYTE:.2f}MB is available."
+                    )
+                self.logger.info(
+                    "CXL: used: %.2fMB load: %.2fMB after: %.2fMB",
+                    self.cxl_used / MB_TO_BYTE,
+                    size / MB_TO_BYTE,
+                    (self.cxl_used + size) / MB_TO_BYTE,
+                )
+                self.cxl_used += size
         else:
             raise RuntimeError(f"[MemoryModel] [node_id={self.node_id},inst={self.instance_id}] Trying to allocate KV cache in unsupported device {device}")
     
@@ -279,7 +294,21 @@ class MemoryModel():
                 )
                 self.cpu_used -= size
         elif device == Device.CXL:
-            self.second_tier_prefix_cache.free(size)
+            if self.enable_prefix_caching and hasattr(self, 'second_tier_prefix_cache'):
+                self.second_tier_prefix_cache.free(size)
+            else:
+                if self.cxl_used - size < 0:
+                    raise RuntimeError(
+                        f"[MemoryModel] [node_id={self.node_id},inst={self.instance_id}] CXL: tried to free {size / MB_TO_BYTE:.2f}MB "
+                        f"but only {self.cxl_used / MB_TO_BYTE:.2f}MB is used."
+                    )
+                self.logger.info(
+                    "CXL: used: %.2fMB remove: %.2fMB after: %.2fMB",
+                    self.cxl_used / MB_TO_BYTE,
+                    size / MB_TO_BYTE,
+                    (self.cxl_used - size) / MB_TO_BYTE,
+                )
+                self.cxl_used -= size
         else:
             raise RuntimeError(f"[MemoryModel] [node_id={self.node_id},inst={self.instance_id}] Trying to free KV cache in unsupported device {device}")
     
@@ -298,7 +327,10 @@ class MemoryModel():
                 else:
                     return False 
         elif device == Device.CXL:
-            return self.second_tier_prefix_cache.is_avail(size)
+            if self.enable_prefix_caching and hasattr(self, 'second_tier_prefix_cache'):
+                return self.second_tier_prefix_cache.is_avail(size)
+            else:
+                return (self.cxl_mem - self.cxl_used) >= size
         else:
             raise RuntimeError(f"[MemoryModel] [node_id={self.node_id},inst={self.instance_id}] Trying to check available size of unsupported device {device}")
     

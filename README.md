@@ -1,3 +1,9 @@
+Note: This repository and codebase is fork of LLM Serving Sim 2.0, modified for the DSTN (CS F446) course project on KV Cache management for LLM serving. 
+
+We add different tiers for KV cache (like SSDs, NVMe, DRAM, Ethernet-backed, etc.) and implement various eviction policies including HARP and DynMax (experimental) designed by us for the course project. The main simulation logic is in `main.py`, and we provide benchmark runners in the `benchmarks/` directory for systematic evaluation.
+
+The original codebase and documentation are maintained by the CASYS Lab at KAIST. For the original repository, please visit: https://github.com/casys-kaist/LLMServingSim
+
 # LLMServingSim 2.0: A Unified Simulator for Heterogeneous and Disaggregated LLM Serving Infrastructure
 
 
@@ -107,6 +113,86 @@ prefix caching, CXL memory, PIM, power modeling, and sub-batch interleaving:
 
 For artifact evaluation configurations and scripts, see the `evaluation/` directory.
 
+## Eviction Policy Workloads
+
+Use this section as a quick runbook for policy-focused experiments.
+
+### 1. Single-run policy comparison
+
+Run the same workload and cluster config with different policies:
+
+```bash
+for policy in tail fifo lru largest_kv smallest_kv random evicpress harp dynmax adaptive_dynmax; do
+  python main.py \
+    --cluster-config cluster_config/tiered_kv_tier_cpu_dram.json \
+    --dataset dataset/sharegpt_req300_rate10_llama.jsonl \
+    --num-req 300 \
+    --kv-eviction-policy "${policy}" \
+    --output "output/policy_runs/${policy}_result.csv" \
+    --timeseries-output "output/policy_runs/${policy}_timeseries.csv"
+done
+```
+
+### 2. HARP-focused run
+
+HARP supports explicit tuning of grace windows, compression ratios, and scoring weights:
+
+```bash
+python main.py \
+  --cluster-config cluster_config/tiered_kv_tier_cpu_dram.json \
+  --dataset dataset/sharegpt_req1000_rate10_llama.jsonl \
+  --num-req 1000 \
+  --kv-eviction-policy harp \
+  --harp-grace-candidates 16,32,64 \
+  --harp-ratios 1.0,0.75,0.5,0.25 \
+  --harp-lambda-stall 1.0 \
+  --harp-lambda-quality 0.5 \
+  --harp-lambda-fairness 0.1 \
+  --output output/harp_single/result.csv \
+  --timeseries-output output/harp_single/timeseries.csv
+```
+
+See [docs/HARP.md](docs/HARP.md) for the full decision model and metrics.
+
+### 3. EVICPRESS-focused run
+
+```bash
+python main.py \
+  --cluster-config cluster_config/tiered_kv_tier_cxl.json \
+  --dataset dataset/sharegpt_req750_rate10_llama.jsonl \
+  --num-req 750 \
+  --kv-eviction-policy evicpress \
+  --evicpress-alpha 1.0 \
+  --evicpress-ratios 1.0,0.75,0.5,0.25 \
+  --evicpress-methods balanced \
+  --output output/evicpress_single/result.csv \
+  --timeseries-output output/evicpress_single/timeseries.csv
+```
+
+### 4. Automated workload runners (recommended)
+
+The benchmark runners in `benchmarks/` execute reusable workload matrices and produce summary CSVs.
+
+| Script | What it runs | Example command | Main outputs |
+| --- | --- | --- | --- |
+| `benchmarks/run_tier_policy_matrix.py` | tier x policy x workload matrix | `python benchmarks/run_tier_policy_matrix.py --tiers cpu_dram cxl --policies tail fifo lru largest_kv evicpress harp --workloads sharegpt_100 fixed_256 --rerun` | `output/tiered_kv/tier_policy_matrix/` |
+| `benchmarks/run_harp_ablation.py` | fixed HARP/Tail ablation on ShareGPT-1000 (CPU-DRAM tier) | `python benchmarks/run_harp_ablation.py --rerun` | `output/tiered_kv/harp_ablation/sharegpt1000_cpu_dram/` |
+| `benchmarks/run_model_tier_policy_matrix.py` | model x tier x policy x workload matrix | `python benchmarks/run_model_tier_policy_matrix.py --models llama8b phi_moe --tiers cpu_dram cxl --policies tail evicpress harp --workloads sharegpt_100 fixed_256 --jobs 2 --rerun` | `output/tiered_kv/model_tier_policy_matrix/` |
+| `benchmarks/run_baseline.py` | phase-based sweeps (A-E) across tiering/prefix setups | `python benchmarks/run_baseline.py --phase A --kv-eviction-policy tail` | `output/tiered_kv/phaseA/...` |
+| `benchmarks/run_backend_diff.py` | analytical vs ns3 backend comparison | `python benchmarks/run_backend_diff.py --configs npu_cpu npu_cxl_cpu --workloads sharegpt_100 prefix_stress --kv-eviction-policy tail --rerun` | `output/tiered_kv/backend_diff/` |
+| `benchmarks/run_cxl_sweep.py` | CXL capacity sweep from 0 to 256 GB | `python benchmarks/run_cxl_sweep.py` | `output/tiered_kv/cxl_sweep/` |
+
+### 5. Common workload keys used by runners
+
+- `sharegpt_100`, `sharegpt_300`, `sharegpt_750`, `sharegpt_1000`, `sharegpt_1500`
+- `fixed_256`
+- `prefix_stress`
+
+For additional benchmark notes and policy references, see:
+- `benchmarks/KV_EVICTION_POLICY_RESEARCH.md`
+- `docs/HARP.md`
+- `docs/WORKLOAD_RUNBOOK.md`
+
 ## Parameters of `main.py`
 
 The current version supports the following models and hardware:
@@ -127,6 +213,11 @@ New models and hardware can be added using the provided profiler. See
 | `--fp` | `16` | Floating-point precision in bits |
 | `--request-routing-policy` | `RR` | Request routing across instances (`RR`, `RAND`, `CUSTOM`) |
 | `--expert-routing-policy` | `FAST` | Expert token routing for MoE (`RR`, `RAND`, `FAST`, `CUSTOM`) |
+| `--kv-eviction-policy` | `tail` | Decode-request preemption policy when KV memory is full (built-ins include `tail`, `fifo`, `lru`, `largest_kv`, `smallest_kv`, `random`, `evicpress`, `harp`, `dynmax`, `adaptive_dynmax`; `oldest` is kept as a compatibility alias of `fifo`; custom policies can be added under `inference_serving/eviction_policies/`) |
+| `--evicpress-alpha` | `1.0` | Quality-latency tradeoff coefficient for EVICPRESS utility scoring |
+| `--evicpress-ratios` | `1.0,0.75,0.5,0.25` | Comma-separated compression keep ratios used by EVICPRESS |
+| `--evicpress-methods` | `balanced` | Comma-separated EVICPRESS compression methods/profiles (`none`, `balanced`, `kivi`, `kvquant`, `gearkv`, `h2o`, `trace`) |
+| `--evicpress-compression-trace` | `` | Optional JSON/CSV ratio-sensitivity trace used when `--evicpress-methods` includes `trace` |
 | `--enable-prefix-caching` | `False` | Enable prefix caching via RadixAttention |
 | `--enable-prefix-sharing` | `False` | Enable second-tier prefix cache pooling |
 | `--prefix-storage` | `None` | Storage tier for the second-tier prefix pool (`None`, `CPU`, `CXL`) |
@@ -143,6 +234,15 @@ New models and hardware can be added using the provided profiler. See
 | `--log-interval` | `0.5` | Throughput logging interval in seconds |
 | `--log-level` | `WARNING` | Logging verbosity (`WARNING`, `INFO`, `DEBUG`) |
 | `--network-backend` | `analytical` | Network simulation backend (`analytical`, `ns3`) |
+
+### Custom KV Eviction Policies
+
+KV eviction policies are modularized in `inference_serving/eviction_policies/`.
+You can add a new policy by creating a class that subclasses
+`EvictionPolicy`, registering it with `@register_policy("your_policy_name")`,
+and importing that module from `inference_serving/eviction_policies/__init__.py`.
+After registration, the policy becomes available in `--kv-eviction-policy`.
+HARP is documented in [docs/HARP.md](docs/HARP.md).
 
 ## Outputs of `main.py`
 

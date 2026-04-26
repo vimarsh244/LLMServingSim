@@ -49,6 +49,8 @@ def generate_trace(batch, hardware, npu_num, npu_group, pd_type=None, node_id=0,
     # vllm: add load or eviction in the txt file
     load_size = batch.load
     evict_size = batch.evict
+    load_cxl_size = getattr(batch, 'load_cxl', 0)
+    evict_cxl_size = getattr(batch, 'evict_cxl', 0)
 
     output_path = f"inputs/trace/{hardware}/{batch.model}/instance{instance_id}_batch{batch.batch_id}.txt"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -89,13 +91,30 @@ def generate_trace(batch, hardware, npu_num, npu_group, pd_type=None, node_id=0,
 
     # vllm: open output txt file and add load, evict mem 
     mem = []
+    # CPU transfers must always use the host-memory path, regardless of the
+    # configured default eviction tier in placement.
+    cpu_dev = f"REMOTE:{node_id}"
+    # External-tier transfers follow the configured KV eviction location.
+    external_dev = get_device(placement, None, None, 'kv_evict_loc')
+
+    # CXL load/evict entries (faster tier, listed first)
+    if load_cxl_size != 0:
+        mem.append(["kv_load", '0', 'LOCAL', '0', external_dev, str(load_cxl_size), 'LOCAL', '0', 'NONE', '0', 'NONE'])
+        if power_model is not None:
+            power_model.add_dram_energy_consumption(node_id, load_cxl_size)
+    if evict_cxl_size != 0:
+        mem.append(["kv_evict", '0', 'LOCAL', '0', external_dev, str(evict_cxl_size), 'LOCAL', '0', 'NONE', '0', 'NONE'])
+        if power_model is not None:
+            power_model.add_dram_energy_consumption(node_id, evict_cxl_size)
+
+    # CPU load/evict entries
     if load_size != 0:
-        load = ["kv_load", '0', 'LOCAL', '0', get_device(placement, None, None, 'kv_evict_loc'), str(load_size), 'LOCAL', '0', 'NONE', '0', 'NONE']
+        load = ["kv_load", '0', 'LOCAL', '0', cpu_dev, str(load_size), 'LOCAL', '0', 'NONE', '0', 'NONE']
         mem.append(load)
         if power_model is not None:
             power_model.add_dram_energy_consumption(node_id, load_size)
     if evict_size != 0:
-        evict = ["kv_evict", '0', 'LOCAL', '0', get_device(placement, None, None, 'kv_evict_loc'), str(evict_size), 'LOCAL', '0', 'NONE', '0', 'NONE']
+        evict = ["kv_evict", '0', 'LOCAL', '0', cpu_dev, str(evict_size), 'LOCAL', '0', 'NONE', '0', 'NONE']
         mem.append(evict)
         if power_model is not None:
             power_model.add_dram_energy_consumption(node_id, evict_size)
@@ -124,7 +143,14 @@ def generate_trace(batch, hardware, npu_num, npu_group, pd_type=None, node_id=0,
         for i in range(0, len(result)):
             if "EXPERT" not in result[i][0] and "PIM" not in result[i][0]:
                 new_string = f'{result[i][0]}_{i}'
-                f.write(formatter(new_string, *result[i][1:]))
+                fields = [str(x) for x in result[i][1:]]
+                # Parsed rows can lose trailing empty columns after regex split;
+                # normalize to the formatter's fixed 10-field payload.
+                if len(fields) < 10:
+                    fields.extend([""] * (10 - len(fields)))
+                elif len(fields) > 10:
+                    fields = fields[:10]
+                f.write(formatter(new_string, *fields))
             else:
                 f.write(formatter(' '.join(result[i]),'','','','','','','','','',''))
     return

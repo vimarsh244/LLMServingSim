@@ -1,0 +1,43 @@
+{
+    "num_nodes": 1,
+    "link_bw": 112,
+    "link_latency": 0,
+    "nodes": [
+        {
+            "num_instances": 1,
+            "cpu_mem": {
+                "mem_size": 128,
+                "mem_bw": 220,
+                "mem_latency": 110
+            },
+            "instances": [
+                {
+                    "model_name": "mistralai/Mixtral-8x7B-v0.1",
+                    "hardware": "A6000",
+                    "npu_mem": {
+                        "mem_size": 16,
+                        "mem_bw": 768,
+                        "mem_latency": 0
+                    },
+                    "npu_num": 1,
+                    "npu_group": 1,
+                    "pd_type": null,
+                    "placement": {
+                        "default": {
+                            "weights": "npu",
+                            "kv_loc": "npu",
+                            "kv_evict_loc": "nvme"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "external_kv_tier": {
+        "name": "PCIE_NVME",
+        "mem_size": 4096,
+        "mem_latency": 80000,
+        "mem_bw": 6.8,
+        "num_devices": 1
+    }
+}

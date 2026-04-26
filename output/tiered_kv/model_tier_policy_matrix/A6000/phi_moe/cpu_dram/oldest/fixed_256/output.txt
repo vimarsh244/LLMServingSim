@@ -1,0 +1,882 @@
+================================================================================
+[1m                                LLMServingSim2.0                                [0m
+[95m  A Unified Simulator for Heterogeneous Hardware and Serving Techniques in LLM  [0m
+================================================================================
+[96m     _    _    __  __ ___              _           ___ _       ___   __  
+    | |  | |  |  \/  / __| ___ _ ___ _(_)_ _  __ _/ __(_)_ __ |_  ) /  \ 
+    | |__| |__| |\/| \__ \/ -_) '_\ V / | ' \/ _` \__ \ | '  \ / / | () |
+    |____|____|_|  |_|___/\___|_|  \_/|_|_||_\__, |___/_|_|_|_/___(_)__/ 
+                                             |___/       [0m
+--------------------------------------------------------------------------------
+[95m                              Input configuration                               [0m
+
+  • [96mCluster config               [0m : output/tiered_kv/model_tier_policy_matrix/_generated_cluster_configs/phi_moe__cpu_dram__A6000.json
+  • [96mDataset                      [0m : dataset/fixed_in128_out512_req256_rate10.jsonl
+  • [96mNum requests                 [0m : 256
+  • [96mMax batch                    [0m : inf
+  • [96mMax batched tokens           [0m : 2048
+  • [96mBlock size (tokens)          [0m : 16
+  • [96mFP precision                 [0m : 16-bit
+  • [96mRequest routing              [0m : RR
+  • [96mExpert routing               [0m : FAST
+  • [96mKV eviction policy           [0m : oldest
+  • [96mEVICPRESS alpha              [0m : 1.0
+  • [96mEVICPRESS ratios             [0m : 1.0,0.75,0.5,0.25
+  • [96mHARP grace candidates        [0m : 16,32,64
+  • [96mHARP ratios                  [0m : 1.0,0.75,0.5,0.25
+  • [96mHARP lambda stall            [0m : 1.0
+  • [96mHARP lambda quality          [0m : 0.5
+  • [96mHARP lambda fairness         [0m : 0.1
+  • [96mHARP fairness epsilon        [0m : 1e-06
+  • [96mHARP compression profile     [0m : balanced
+  • [96mHARP compression trace       [0m : N/A
+  • [96mPrefix caching               [0m : DISABLED
+  • [96mPrefix caching scheme        [0m : xPU-Only
+  • [96mCentralized prefix caching   [0m : DISABLED
+  • [96mOffload attention to PIM     [0m : DISABLED
+  • [96mSub-batch interleaving       [0m : DISABLED
+  • [96mRealtime attention prediction[0m : DISABLED
+  • [96mPrioritize prefill           [0m : DISABLED
+  • [96mNetwork backend              [0m : analytical
+  • [96mLog interval (s)             [0m : 0.5
+  • [96mLog level                    [0m : WARNING
+--------------------------------------------------------------------------------
+[1m[96m▶ Starting simulation...
+[0m[0m
+[0.5s] [94mAvg prompt throughput: 768.0 tokens/s,[0m [94mAvg generation throughput: 38.0 tokens/s[0m
+        ├─Running Instance[0]: 3 reqs, Total # 1 NPUs, Each NPU Memory Usage 14639.51 MB (89.352 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[1.0s] [94mAvg prompt throughput: 1536.0 tokens/s,[0m [94mAvg generation throughput: 176.0 tokens/s[0m
+        ├─Running Instance[0]: 9 reqs, Total # 1 NPUs, Each NPU Memory Usage 14751.51 MB (90.036 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[1.5s] [94mAvg prompt throughput: 768.0 tokens/s,[0m [94mAvg generation throughput: 310.0 tokens/s[0m
+        ├─Running Instance[0]: 12 reqs, Total # 1 NPUs, Each NPU Memory Usage 14821.51 MB (90.463 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[2.0s] [94mAvg prompt throughput: 2816.0 tokens/s,[0m [94mAvg generation throughput: 426.0 tokens/s[0m
+        ├─Running Instance[0]: 24 reqs, Total # 1 NPUs, Each NPU Memory Usage 15055.51 MB (91.892 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[2.5s] [94mAvg prompt throughput: 1792.0 tokens/s,[0m [94mAvg generation throughput: 586.0 tokens/s[0m
+        ├─Running Instance[0]: 31 reqs, Total # 1 NPUs, Each NPU Memory Usage 15215.51 MB (92.868 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[3.0s] [94mAvg prompt throughput: 1024.0 tokens/s,[0m [94mAvg generation throughput: 730.0 tokens/s[0m
+        ├─Running Instance[0]: 34 reqs, Total # 1 NPUs, Each NPU Memory Usage 15303.51 MB (93.405 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[3.5s] [94mAvg prompt throughput: 1024.0 tokens/s,[0m [94mAvg generation throughput: 782.0 tokens/s[0m
+        ├─Running Instance[0]: 39 reqs, Total # 1 NPUs, Each NPU Memory Usage 15445.51 MB (94.272 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[4.0s] [94mAvg prompt throughput: 1792.0 tokens/s,[0m [94mAvg generation throughput: 852.0 tokens/s[0m
+        ├─Running Instance[0]: 46 reqs, Total # 1 NPUs, Each NPU Memory Usage 15617.51 MB (95.322 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[4.5s] [94mAvg prompt throughput: 1280.0 tokens/s,[0m [94mAvg generation throughput: 978.0 tokens/s[0m
+        ├─Running Instance[0]: 50 reqs, Total # 1 NPUs, Each NPU Memory Usage 15739.51 MB (96.066 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[5.0s] [94mAvg prompt throughput: 512.0 tokens/s,[0m [94mAvg generation throughput: 1030.0 tokens/s[0m
+        ├─Running Instance[0]: 53 reqs, Total # 1 NPUs, Each NPU Memory Usage 15865.51 MB (96.835 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[5.5s] [94mAvg prompt throughput: 768.0 tokens/s,[0m [94mAvg generation throughput: 970.0 tokens/s[0m
+        ├─Running Instance[0]: 55 reqs, Total # 1 NPUs, Each NPU Memory Usage 15949.51 MB (97.348 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[6.0s] [94mAvg prompt throughput: 2304.0 tokens/s,[0m [94mAvg generation throughput: 1084.0 tokens/s[0m
+        ├─Running Instance[0]: 65 reqs, Total # 1 NPUs, Each NPU Memory Usage 16197.51 MB (98.862 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[6.5s] [94mAvg prompt throughput: 1280.0 tokens/s,[0m [94mAvg generation throughput: 1084.0 tokens/s[0m
+        ├─Running Instance[0]: 69 reqs, Total # 1 NPUs, Each NPU Memory Usage 16323.51 MB (99.631 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[7.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1026.0 tokens/s[0m
+        ├─Running Instance[0]: 73 reqs, Total # 1 NPUs, Each NPU Memory Usage 16383.51 MB (99.997 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[7.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 52.0 tokens/s[0m
+        ├─Running Instance[0]: 80 reqs, Total # 1 NPUs, Each NPU Memory Usage 16351.51 MB (99.802 % Used)
+        └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+[8.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 30.0 tokens/s[0m
+        ├─Running Instance[0]: 86 reqs, Total # 1 NPUs, Each NPU Memory Usage 16353.51 MB (99.814 % Used)
+        └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+[8.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 28.0 tokens/s[0m
+        ├─Running Instance[0]: 91 reqs, Total # 1 NPUs, Each NPU Memory Usage 16355.51 MB (99.826 % Used)
+        └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+[9.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 28.0 tokens/s[0m
+        ├─Running Instance[0]: 96 reqs, Total # 1 NPUs, Each NPU Memory Usage 16357.51 MB (99.838 % Used)
+        └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+[9.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 26.0 tokens/s[0m
+        ├─Running Instance[0]: 104 reqs, Total # 1 NPUs, Each NPU Memory Usage 16357.51 MB (99.838 % Used)
+        └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+[10.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 28.0 tokens/s[0m
+         ├─Running Instance[0]: 112 reqs, Total # 1 NPUs, Each NPU Memory Usage 16359.51 MB (99.851 % Used)
+         └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "73728_387                     LOCAL          8192           LOCAL          73728          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "73728_387                     LOCAL          8192           LOCAL          73728          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "73728_387                     LOCAL          8192           LOCAL          73728          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            o_proj_367_38750767          LOCAL          73728          LOCAL          33554432       LOCAL          73728          NONE           0              NONE           
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "73728_387                     LOCAL          8192           LOCAL          73728          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "73728_387                     LOCAL          8192           LOCAL          73728          NONE           0              NONE                                                        
+"
+[10.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 28.0 tokens/s[0m
+         ├─Running Instance[0]: 115 reqs, Total # 1 NPUs, Each NPU Memory Usage 16361.51 MB (99.863 % Used)
+         └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "73728_387                     LOCAL          8192           LOCAL          73728          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "73728_387                     LOCAL          8192           LOCAL          73728          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'END'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "PERT_387                      END                                                                                                                                                   
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'model_parallel_NPU_group:1'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "COLOCATED_0                   model_parallel_NPU_group:1                                                                                                                                      
+"
+[11.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 28.0 tokens/s[0m
+         ├─Running Instance[0]: 118 reqs, Total # 1 NPUs, Each NPU Memory Usage 16363.51 MB (99.875 % Used)
+         └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'NONE'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "0_247                         NONE                                                                                                                                                  
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'END'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "PERT_387                      END                                                                                                                                                   
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "8192_387                      LOCAL          8192           LOCAL          8192           NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'NONE'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "0_356                         NONE                                                                                                                                                  
+"
+[11.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 26.0 tokens/s[0m
+         ├─Running Instance[0]: 121 reqs, Total # 1 NPUs, Each NPU Memory Usage 16365.51 MB (99.887 % Used)
+         └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+[12.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 28.0 tokens/s[0m
+         ├─Running Instance[0]: 129 reqs, Total # 1 NPUs, Each NPU Memory Usage 16367.51 MB (99.899 % Used)
+         └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "81920_387                     LOCAL          8192           LOCAL          81920          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "81920_387                     LOCAL          8192           LOCAL          81920          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 26, in __init__
+    if col[0] == 'EXPERT': # If Expert Flag
+       ~~~^^^
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- " 
+"
+[12.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 26.0 tokens/s[0m
+         ├─Running Instance[0]: 135 reqs, Total # 1 NPUs, Each NPU Memory Usage 16369.51 MB (99.912 % Used)
+         └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+[13.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 26.0 tokens/s[0m
+         ├─Running Instance[0]: 139 reqs, Total # 1 NPUs, Each NPU Memory Usage 16369.51 MB (99.912 % Used)
+         └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 64, in __init__
+    self.comm_size = int(col[9])
+                         ~~~^^^
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "LOCAL_201                     81920          LOCAL          33554432       LOCAL          81920          NONE           0              NONE                                         
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "81920_387                     LOCAL          8192           LOCAL          81920          NONE           0              NONE                                                        
+"
+[13.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 28.0 tokens/s[0m
+         ├─Running Instance[0]: 142 reqs, Total # 1 NPUs, Each NPU Memory Usage 16371.51 MB (99.924 % Used)
+         └─Node[0]: Total CPU Memory Usage 34.00 MB, 0.006 % Used 
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "81920_387                     LOCAL          8192           LOCAL          81920          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 48, in __init__
+    self.comp_time = int(col[1])
+                     ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'LOCAL'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "81920_387                     LOCAL          8192           LOCAL          81920          NONE           0              NONE                                                        
+"
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 64, in __init__
+    self.comm_size = int(col[9])
+                         ~~~^^^
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 250, in convert_common
+    layers: list[Layer] = self.get_layers(f)
+                          ~~~~~~~~~~~~~~~^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 105, in get_layers
+    layers.append(Layer(line))
+                  ~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 69, in __init__
+    raise ValueError(f"Cannot parse the following layer -- \"{line}\"")
+ValueError: Cannot parse the following layer -- "LOCAL_201                     8192           LOCAL          33554432       LOCAL          8192           NONE           0              NONE                                         
+"
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 156, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/converter.py", line 41, in convert_llm
+    converter.convert()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 875, in convert
+    self.convert_common(f, num_layers, num_npu_group)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/marvell/LLMServingSim/astra-sim/extern/graph_frontend/chakra/src/converter/llm_converter.py", line 524, in convert_common
+    layers[layer_end - 1].output_memory_loc,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Layer' object has no attribute 'output_memory_loc'
+Traceback (most recent call last):
+  File "/home/marvell/LLMServingSim/main.py", line 745, in <module>
+    if __name__ == "__main__":
+        ^^^^^^
+  File "/home/marvell/LLMServingSim/main.py", line 393, in main
+    ])
+    
+  File "/home/marvell/LLMServingSim/inference_serving/controller.py", line 16, in read_wait
+    line = p.stdout.readline()
+  File "<frozen codecs>", line 322, in decode
+KeyboardInterrupt

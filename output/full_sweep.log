@@ -1,0 +1,89 @@
+
+################################################################################
+  Tiered KV Cache Baseline Experiments
+  Phases: ['A', 'B', 'C', 'D']
+  Total experiments: 47
+  Started: 2026-02-26 19:17:57
+################################################################################
+
+  [SKIP] phaseA/npu_cpu/sharegpt_100 — already has results
+
+  [SKIP] phaseA/npu_cpu/sharegpt_300 — already has results
+
+  [SKIP] phaseA/npu_cpu/fixed_256 — already has results
+
+  [SKIP] phaseA/npu_cpu/prefix_stress — already has results
+
+  [SKIP] phaseA/npu_cpu/pulse_prefix — already has results
+
+================================================================================
+  Experiment: phaseB/no_prefix/sharegpt_100
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/sharegpt_req100_rate10_llama.jsonl --num-req 100 --output output/tiered_kv/phaseB/no_prefix/sharegpt_100/result.csv --timeseries-output output/tiered_kv/phaseB/no_prefix/sharegpt_100/timeseries.csv --block-size 16 --log-interval 0.5
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/no_prefix/sharegpt_100
+================================================================================
+  [OK] Completed successfully
+
+================================================================================
+  Experiment: phaseB/no_prefix/sharegpt_300
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/sharegpt_req300_rate10_llama.jsonl --num-req 300 --output output/tiered_kv/phaseB/no_prefix/sharegpt_300/result.csv --timeseries-output output/tiered_kv/phaseB/no_prefix/sharegpt_300/timeseries.csv --block-size 16 --log-interval 0.5
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/no_prefix/sharegpt_300
+================================================================================
+  [OK] Completed successfully
+
+================================================================================
+  Experiment: phaseB/no_prefix/prefix_stress
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/prefix_pool_stress.jsonl --num-req 100 --output output/tiered_kv/phaseB/no_prefix/prefix_stress/result.csv --timeseries-output output/tiered_kv/phaseB/no_prefix/prefix_stress/timeseries.csv --block-size 16 --log-interval 0.5
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/no_prefix/prefix_stress
+================================================================================
+  [OK] Completed successfully
+
+================================================================================
+  Experiment: phaseB/no_prefix/pulse_prefix
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/sharegpt_pulse_req50_n6_delay15_pc.jsonl --num-req 300 --output output/tiered_kv/phaseB/no_prefix/pulse_prefix/result.csv --timeseries-output output/tiered_kv/phaseB/no_prefix/pulse_prefix/timeseries.csv --block-size 16 --log-interval 0.5
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/no_prefix/pulse_prefix
+================================================================================
+  [OK] Completed successfully
+
+================================================================================
+  Experiment: phaseB/prefix_npu/sharegpt_100
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/sharegpt_req100_rate10_llama.jsonl --num-req 100 --output output/tiered_kv/phaseB/prefix_npu/sharegpt_100/result.csv --timeseries-output output/tiered_kv/phaseB/prefix_npu/sharegpt_100/timeseries.csv --block-size 16 --log-interval 0.5 --enable-prefix-caching
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/prefix_npu/sharegpt_100
+================================================================================
+  [OK] Completed successfully
+
+================================================================================
+  Experiment: phaseB/prefix_npu/sharegpt_300
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/sharegpt_req300_rate10_llama.jsonl --num-req 300 --output output/tiered_kv/phaseB/prefix_npu/sharegpt_300/result.csv --timeseries-output output/tiered_kv/phaseB/prefix_npu/sharegpt_300/timeseries.csv --block-size 16 --log-interval 0.5 --enable-prefix-caching
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/prefix_npu/sharegpt_300
+================================================================================
+  [FAILED] Exit code: 1
+
+================================================================================
+  Experiment: phaseB/prefix_npu/prefix_stress
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/prefix_pool_stress.jsonl --num-req 100 --output output/tiered_kv/phaseB/prefix_npu/prefix_stress/result.csv --timeseries-output output/tiered_kv/phaseB/prefix_npu/prefix_stress/timeseries.csv --block-size 16 --log-interval 0.5 --enable-prefix-caching
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/prefix_npu/prefix_stress
+================================================================================
+  [OK] Completed successfully
+
+================================================================================
+  Experiment: phaseB/prefix_npu/pulse_prefix
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/sharegpt_pulse_req50_n6_delay15_pc.jsonl --num-req 300 --output output/tiered_kv/phaseB/prefix_npu/pulse_prefix/result.csv --timeseries-output output/tiered_kv/phaseB/prefix_npu/pulse_prefix/timeseries.csv --block-size 16 --log-interval 0.5 --enable-prefix-caching
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/prefix_npu/pulse_prefix
+================================================================================
+  [FAILED] Exit code: 1
+
+================================================================================
+  Experiment: phaseB/prefix_cpu/sharegpt_100
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/sharegpt_req100_rate10_llama.jsonl --num-req 100 --output output/tiered_kv/phaseB/prefix_cpu/sharegpt_100/result.csv --timeseries-output output/tiered_kv/phaseB/prefix_cpu/sharegpt_100/timeseries.csv --block-size 16 --log-interval 0.5 --enable-prefix-caching --prefix-storage CPU
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/prefix_cpu/sharegpt_100
+================================================================================
+  [OK] Completed successfully
+
+================================================================================
+  Experiment: phaseB/prefix_cpu/sharegpt_300
+  Command:    /home/marvell/LLMServingSim/env/bin/python /home/marvell/LLMServingSim/main.py --cluster-config cluster_config/tiered_kv_prefix_cpu.json --dataset dataset/sharegpt_req300_rate10_llama.jsonl --num-req 300 --output output/tiered_kv/phaseB/prefix_cpu/sharegpt_300/result.csv --timeseries-output output/tiered_kv/phaseB/prefix_cpu/sharegpt_300/timeseries.csv --block-size 16 --log-interval 0.5 --enable-prefix-caching --prefix-storage CPU
+  Output:     /home/marvell/LLMServingSim/output/tiered_kv/phaseB/prefix_cpu/sharegpt_300
+================================================================================
+  [FAILED] Exit code: 1
+
+================================================================================

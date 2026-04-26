@@ -1,0 +1,312 @@
+================================================================================
+[1m                                LLMServingSim2.0                                [0m
+[95m  A Unified Simulator for Heterogeneous Hardware and Serving Techniques in LLM  [0m
+================================================================================
+[96m     _    _    __  __ ___              _           ___ _       ___   __  
+    | |  | |  |  \/  / __| ___ _ ___ _(_)_ _  __ _/ __(_)_ __ |_  ) /  \ 
+    | |__| |__| |\/| \__ \/ -_) '_\ V / | ' \/ _` \__ \ | '  \ / / | () |
+    |____|____|_|  |_|___/\___|_|  \_/|_|_||_\__, |___/_|_|_|_/___(_)__/ 
+                                             |___/       [0m
+--------------------------------------------------------------------------------
+[95m                              Input configuration                               [0m
+
+  • [96mCluster config               [0m : cluster_config/tiered_kv_prefix_cxl.json
+  • [96mDataset                      [0m : dataset/sharegpt_req100_rate10_llama.jsonl
+  • [96mNum requests                 [0m : 100
+  • [96mMax batch                    [0m : inf
+  • [96mMax batched tokens           [0m : 2048
+  • [96mBlock size (tokens)          [0m : 16
+  • [96mFP precision                 [0m : 16-bit
+  • [96mRequest routing              [0m : RR
+  • [96mExpert routing               [0m : FAST
+  • [96mPrefix caching               [0m : ENABLED
+  • [96mPrefix caching scheme        [0m : xPU + CXL
+  • [96mCentralized prefix caching   [0m : DISABLED
+  • [96mOffload attention to PIM     [0m : DISABLED
+  • [96mSub-batch interleaving       [0m : DISABLED
+  • [96mRealtime attention prediction[0m : DISABLED
+  • [96mPrioritize prefill           [0m : DISABLED
+  • [96mNetwork backend              [0m : analytical
+  • [96mLog interval (s)             [0m : 0.5
+  • [96mLog level                    [0m : WARNING
+--------------------------------------------------------------------------------
+[1m[96m▶ Starting simulation...
+[0m[0m
+[0.5s] [94mAvg prompt throughput: 270.0 tokens/s,[0m [94mAvg generation throughput: 52.0 tokens/s[0m
+        ├─Running Instance[0]: 3 reqs, Total # 1 NPUs, Each NPU Memory Usage 15332.51 MB (62.388 % Used), Prefix Cache Hit ratio 0.00 %, (0 / 135)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 20.12 MB, 0.000 % Used
+[1.0s] [94mAvg prompt throughput: 1052.0 tokens/s,[0m [94mAvg generation throughput: 232.0 tokens/s[0m
+        ├─Running Instance[0]: 9 reqs, Total # 1 NPUs, Each NPU Memory Usage 15408.51 MB (62.697 % Used), Prefix Cache Hit ratio 0.00 %, (0 / 661)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 100.38 MB, 0.000 % Used
+[1.5s] [94mAvg prompt throughput: 116.0 tokens/s,[0m [94mAvg generation throughput: 424.0 tokens/s[0m
+        ├─Running Instance[0]: 12 reqs, Total # 1 NPUs, Each NPU Memory Usage 15440.51 MB (62.828 % Used), Prefix Cache Hit ratio 0.00 %, (0 / 719)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 134.12 MB, 0.001 % Used
+[2.0s] [94mAvg prompt throughput: 2830.0 tokens/s,[0m [94mAvg generation throughput: 406.0 tokens/s[0m
+        ├─Running Instance[0]: 24 reqs, Total # 1 NPUs, Each NPU Memory Usage 15672.51 MB (63.772 % Used), Prefix Cache Hit ratio 10.50 %, (288 / 2744)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 371.25 MB, 0.001 % Used
+[2.5s] [94mAvg prompt throughput: 2048.0 tokens/s,[0m [94mAvg generation throughput: 736.0 tokens/s[0m
+        ├─Running Instance[0]: 29 reqs, Total # 1 NPUs, Each NPU Memory Usage 15762.51 MB (64.138 % Used), Prefix Cache Hit ratio 9.63 %, (304 / 3158)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 465.38 MB, 0.002 % Used
+[3.0s] [94mAvg prompt throughput: 1010.0 tokens/s,[0m [94mAvg generation throughput: 1066.0 tokens/s[0m
+        ├─Running Instance[0]: 31 reqs, Total # 1 NPUs, Each NPU Memory Usage 15852.51 MB (64.504 % Used), Prefix Cache Hit ratio 16.16 %, (592 / 3663)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 557.00 MB, 0.002 % Used
+[3.5s] [94mAvg prompt throughput: 2486.0 tokens/s,[0m [94mAvg generation throughput: 708.0 tokens/s[0m
+        ├─Running Instance[0]: 36 reqs, Total # 1 NPUs, Each NPU Memory Usage 16162.51 MB (65.765 % Used), Prefix Cache Hit ratio 10.08 %, (592 / 5875)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 876.75 MB, 0.003 % Used
+[4.0s] [94mAvg prompt throughput: 6100.0 tokens/s,[0m [94mAvg generation throughput: 314.0 tokens/s[0m
+        ├─Running Instance[0]: 44 reqs, Total # 1 NPUs, Each NPU Memory Usage 16494.51 MB (67.116 % Used), Prefix Cache Hit ratio 9.32 %, (800 / 8587)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 1207.25 MB, 0.005 % Used
+[4.5s] [94mAvg prompt throughput: 1830.0 tokens/s,[0m [94mAvg generation throughput: 890.0 tokens/s[0m
+        ├─Running Instance[0]: 44 reqs, Total # 1 NPUs, Each NPU Memory Usage 16582.51 MB (67.474 % Used), Prefix Cache Hit ratio 9.20 %, (816 / 8871)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 1292.38 MB, 0.005 % Used
+[5.0s] [94mAvg prompt throughput: 2006.0 tokens/s,[0m [94mAvg generation throughput: 1168.0 tokens/s[0m
+        ├─Running Instance[0]: 44 reqs, Total # 1 NPUs, Each NPU Memory Usage 16714.51 MB (68.012 % Used), Prefix Cache Hit ratio 12.64 %, (1248 / 9877)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 1435.88 MB, 0.005 % Used
+[5.5s] [94mAvg prompt throughput: 784.0 tokens/s,[0m [94mAvg generation throughput: 1324.0 tokens/s[0m
+        ├─Running Instance[0]: 44 reqs, Total # 1 NPUs, Each NPU Memory Usage 16846.51 MB (68.549 % Used), Prefix Cache Hit ratio 12.16 %, (1248 / 10266)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 1567.00 MB, 0.006 % Used
+[6.0s] [94mAvg prompt throughput: 5332.0 tokens/s,[0m [94mAvg generation throughput: 962.0 tokens/s[0m
+        ├─Running Instance[0]: 54 reqs, Total # 1 NPUs, Each NPU Memory Usage 17222.51 MB (70.079 % Used), Prefix Cache Hit ratio 15.00 %, (2048 / 13651)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 1944.75 MB, 0.007 % Used
+[6.5s] [94mAvg prompt throughput: 2676.0 tokens/s,[0m [94mAvg generation throughput: 872.0 tokens/s[0m
+        ├─Running Instance[0]: 54 reqs, Total # 1 NPUs, Each NPU Memory Usage 17308.51 MB (70.428 % Used), Prefix Cache Hit ratio 16.48 %, (2352 / 14270)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 2037.12 MB, 0.008 % Used
+[7.0s] [94mAvg prompt throughput: 426.0 tokens/s,[0m [94mAvg generation throughput: 1648.0 tokens/s[0m
+        ├─Running Instance[0]: 57 reqs, Total # 1 NPUs, Each NPU Memory Usage 17430.51 MB (70.925 % Used), Prefix Cache Hit ratio 16.24 %, (2352 / 14483)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 2166.25 MB, 0.008 % Used
+[7.5s] [94mAvg prompt throughput: 2564.0 tokens/s,[0m [94mAvg generation throughput: 1312.0 tokens/s[0m
+        ├─Running Instance[0]: 63 reqs, Total # 1 NPUs, Each NPU Memory Usage 17652.51 MB (71.828 % Used), Prefix Cache Hit ratio 18.23 %, (2960 / 16234)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 2388.62 MB, 0.009 % Used
+[8.0s] [94mAvg prompt throughput: 3892.0 tokens/s,[0m [94mAvg generation throughput: 1272.0 tokens/s[0m
+        ├─Running Instance[0]: 67 reqs, Total # 1 NPUs, Each NPU Memory Usage 17830.51 MB (72.553 % Used), Prefix Cache Hit ratio 20.33 %, (3600 / 17711)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 2571.75 MB, 0.010 % Used
+[8.5s] [94mAvg prompt throughput: 1044.0 tokens/s,[0m [94mAvg generation throughput: 1762.0 tokens/s[0m
+        ├─Running Instance[0]: 69 reqs, Total # 1 NPUs, Each NPU Memory Usage 18008.51 MB (73.277 % Used), Prefix Cache Hit ratio 19.74 %, (3600 / 18233)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 2743.00 MB, 0.010 % Used
+[9.0s] [94mAvg prompt throughput: 2570.0 tokens/s,[0m [94mAvg generation throughput: 1514.0 tokens/s[0m
+        ├─Running Instance[0]: 69 reqs, Total # 1 NPUs, Each NPU Memory Usage 18160.51 MB (73.895 % Used), Prefix Cache Hit ratio 22.44 %, (4384 / 19533)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 2898.75 MB, 0.011 % Used
+[9.5s] [94mAvg prompt throughput: 3018.0 tokens/s,[0m [94mAvg generation throughput: 1100.0 tokens/s[0m
+        ├─Running Instance[0]: 70 reqs, Total # 1 NPUs, Each NPU Memory Usage 18388.51 MB (74.823 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 3135.75 MB, 0.012 % Used
+[10.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 2026.0 tokens/s[0m
+         ├─Running Instance[0]: 65 reqs, Total # 1 NPUs, Each NPU Memory Usage 18514.51 MB (75.336 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 3261.75 MB, 0.012 % Used
+[10.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1896.0 tokens/s[0m
+         ├─Running Instance[0]: 61 reqs, Total # 1 NPUs, Each NPU Memory Usage 18636.51 MB (75.832 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 3379.75 MB, 0.013 % Used
+[11.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1824.0 tokens/s[0m
+         ├─Running Instance[0]: 60 reqs, Total # 1 NPUs, Each NPU Memory Usage 18756.51 MB (76.320 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 3493.62 MB, 0.013 % Used
+[11.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1884.0 tokens/s[0m
+         ├─Running Instance[0]: 58 reqs, Total # 1 NPUs, Each NPU Memory Usage 18872.51 MB (76.792 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 3611.12 MB, 0.014 % Used
+[12.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1810.0 tokens/s[0m
+         ├─Running Instance[0]: 55 reqs, Total # 1 NPUs, Each NPU Memory Usage 18986.51 MB (77.256 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 3723.88 MB, 0.014 % Used
+[12.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1712.0 tokens/s[0m
+         ├─Running Instance[0]: 53 reqs, Total # 1 NPUs, Each NPU Memory Usage 19092.51 MB (77.688 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 3830.62 MB, 0.015 % Used
+[13.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1608.0 tokens/s[0m
+         ├─Running Instance[0]: 46 reqs, Total # 1 NPUs, Each NPU Memory Usage 19190.51 MB (78.086 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 3930.25 MB, 0.015 % Used
+[13.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1442.0 tokens/s[0m
+         ├─Running Instance[0]: 43 reqs, Total # 1 NPUs, Each NPU Memory Usage 19278.51 MB (78.444 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4020.00 MB, 0.015 % Used
+[14.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1400.0 tokens/s[0m
+         ├─Running Instance[0]: 40 reqs, Total # 1 NPUs, Each NPU Memory Usage 19360.51 MB (78.778 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4107.12 MB, 0.016 % Used
+[14.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1310.0 tokens/s[0m
+         ├─Running Instance[0]: 35 reqs, Total # 1 NPUs, Each NPU Memory Usage 19442.51 MB (79.112 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4188.38 MB, 0.016 % Used
+[15.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1184.0 tokens/s[0m
+         ├─Running Instance[0]: 32 reqs, Total # 1 NPUs, Each NPU Memory Usage 19514.51 MB (79.405 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4262.00 MB, 0.016 % Used
+[15.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1136.0 tokens/s[0m
+         ├─Running Instance[0]: 30 reqs, Total # 1 NPUs, Each NPU Memory Usage 19588.51 MB (79.706 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4332.75 MB, 0.017 % Used
+[16.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 1030.0 tokens/s[0m
+         ├─Running Instance[0]: 26 reqs, Total # 1 NPUs, Each NPU Memory Usage 19648.51 MB (79.950 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4396.62 MB, 0.017 % Used
+[16.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 984.0 tokens/s[0m
+         ├─Running Instance[0]: 25 reqs, Total # 1 NPUs, Each NPU Memory Usage 19714.51 MB (80.219 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4458.00 MB, 0.017 % Used
+[17.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 820.0 tokens/s[0m
+         ├─Running Instance[0]: 20 reqs, Total # 1 NPUs, Each NPU Memory Usage 19766.51 MB (80.430 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4508.62 MB, 0.017 % Used
+[17.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 716.0 tokens/s[0m
+         ├─Running Instance[0]: 18 reqs, Total # 1 NPUs, Each NPU Memory Usage 19814.51 MB (80.625 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4553.12 MB, 0.017 % Used
+[18.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 632.0 tokens/s[0m
+         ├─Running Instance[0]: 16 reqs, Total # 1 NPUs, Each NPU Memory Usage 19848.51 MB (80.764 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4592.38 MB, 0.018 % Used
+[18.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 554.0 tokens/s[0m
+         ├─Running Instance[0]: 15 reqs, Total # 1 NPUs, Each NPU Memory Usage 19878.51 MB (80.886 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4626.88 MB, 0.018 % Used
+[19.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 550.0 tokens/s[0m
+         ├─Running Instance[0]: 14 reqs, Total # 1 NPUs, Each NPU Memory Usage 19916.51 MB (81.040 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4661.12 MB, 0.018 % Used
+[19.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 508.0 tokens/s[0m
+         ├─Running Instance[0]: 12 reqs, Total # 1 NPUs, Each NPU Memory Usage 19950.51 MB (81.179 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4692.62 MB, 0.018 % Used
+[20.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 456.0 tokens/s[0m
+         ├─Running Instance[0]: 12 reqs, Total # 1 NPUs, Each NPU Memory Usage 19978.51 MB (81.293 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4721.12 MB, 0.018 % Used
+[20.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 450.0 tokens/s[0m
+         ├─Running Instance[0]: 10 reqs, Total # 1 NPUs, Each NPU Memory Usage 20006.51 MB (81.407 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4749.00 MB, 0.018 % Used
+[21.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 376.0 tokens/s[0m
+         ├─Running Instance[0]: 9 reqs, Total # 1 NPUs, Each NPU Memory Usage 20028.51 MB (81.496 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4772.38 MB, 0.018 % Used
+[21.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 314.0 tokens/s[0m
+         ├─Running Instance[0]: 8 reqs, Total # 1 NPUs, Each NPU Memory Usage 20048.51 MB (81.578 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4791.88 MB, 0.018 % Used
+[22.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 304.0 tokens/s[0m
+         ├─Running Instance[0]: 8 reqs, Total # 1 NPUs, Each NPU Memory Usage 20066.51 MB (81.651 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4810.88 MB, 0.018 % Used
+[22.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 304.0 tokens/s[0m
+         ├─Running Instance[0]: 8 reqs, Total # 1 NPUs, Each NPU Memory Usage 20088.51 MB (81.740 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4829.88 MB, 0.018 % Used
+[23.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 304.0 tokens/s[0m
+         ├─Running Instance[0]: 8 reqs, Total # 1 NPUs, Each NPU Memory Usage 20106.51 MB (81.814 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4848.88 MB, 0.018 % Used
+[23.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 278.0 tokens/s[0m
+         ├─Running Instance[0]: 7 reqs, Total # 1 NPUs, Each NPU Memory Usage 20124.51 MB (81.887 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4866.12 MB, 0.019 % Used
+[24.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 266.0 tokens/s[0m
+         ├─Running Instance[0]: 7 reqs, Total # 1 NPUs, Each NPU Memory Usage 20138.51 MB (81.944 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4882.75 MB, 0.019 % Used
+[24.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 254.0 tokens/s[0m
+         ├─Running Instance[0]: 6 reqs, Total # 1 NPUs, Each NPU Memory Usage 20154.51 MB (82.009 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4898.50 MB, 0.019 % Used
+[25.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 222.0 tokens/s[0m
+         ├─Running Instance[0]: 5 reqs, Total # 1 NPUs, Each NPU Memory Usage 20170.51 MB (82.074 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4912.25 MB, 0.019 % Used
+[25.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 162.0 tokens/s[0m
+         ├─Running Instance[0]: 2 reqs, Total # 1 NPUs, Each NPU Memory Usage 20178.51 MB (82.107 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4922.00 MB, 0.019 % Used
+[26.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 68.0 tokens/s[0m
+         ├─Running Instance[0]: 1 reqs, Total # 1 NPUs, Each NPU Memory Usage 20182.51 MB (82.123 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4926.12 MB, 0.019 % Used
+[26.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 36.0 tokens/s[0m
+         ├─Running Instance[0]: 1 reqs, Total # 1 NPUs, Each NPU Memory Usage 20184.51 MB (82.131 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4928.38 MB, 0.019 % Used
+[27.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 36.0 tokens/s[0m
+         ├─Running Instance[0]: 1 reqs, Total # 1 NPUs, Each NPU Memory Usage 20186.51 MB (82.139 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4930.62 MB, 0.019 % Used
+[27.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 38.0 tokens/s[0m
+         ├─Running Instance[0]: 1 reqs, Total # 1 NPUs, Each NPU Memory Usage 20188.51 MB (82.147 % Used), Prefix Cache Hit ratio 21.46 %, (4512 / 21027)
+         ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+         └─CXL[0]: Total CXL Device Memory Usage 4933.00 MB, 0.019 % Used
+--------------------------------------------------------------------------------
+[1m[96m▶ Exiting simulation...
+[0m[0m
+Checking Non-Exited Systems ...
+All Request Has Been Exited
+--------------------------------------------------------------------------------
+[1m[96m▶ Simulation results...
+[0m[0m
+Total simulation time: 0h 1m 0.448s
+--------------------------------------------------------------------------------
+[95m                               Throughput Results                               [0m
+--------------------------------------------------------------------------------
+Total requests:                                                     100
+Total clocks (ns):                                                  27824436215
+Total latency (s):                                                  27.824
+Total input tokens:                                                 21027
+Total generated tokens:                                             23339
+Request throughput (req/s):                                         3.59
+Average prompt throughput (tok/s):                                  755.70
+Average generation throughput (tok/s):                              838.80
+Total token throughput (tok/s):                                     1594.50
+Throughput per 0.5 sec: [(270.0, 52.0), (1052.0, 232.0), (116.0, 424.0), (2830.0, 406.0), (2048.0, 736.0), (1010.0, 1066.0), (2486.0, 708.0), (6100.0, 314.0), (1830.0, 890.0), (2006.0, 1168.0), (784.0, 1324.0), (5332.0, 962.0), (2676.0, 872.0), (426.0, 1648.0), (2564.0, 1312.0), (3892.0, 1272.0), (1044.0, 1762.0), (2570.0, 1514.0), (3018.0, 1100.0), (0.0, 2026.0), (0.0, 1896.0), (0.0, 1824.0), (0.0, 1884.0), (0.0, 1810.0), (0.0, 1712.0), (0.0, 1608.0), (0.0, 1442.0), (0.0, 1400.0), (0.0, 1310.0), (0.0, 1184.0), (0.0, 1136.0), (0.0, 1030.0), (0.0, 984.0), (0.0, 820.0), (0.0, 716.0), (0.0, 632.0), (0.0, 554.0), (0.0, 550.0), (0.0, 508.0), (0.0, 456.0), (0.0, 450.0), (0.0, 376.0), (0.0, 314.0), (0.0, 304.0), (0.0, 304.0), (0.0, 304.0), (0.0, 278.0), (0.0, 266.0), (0.0, 254.0), (0.0, 222.0), (0.0, 162.0), (0.0, 68.0), (0.0, 36.0), (0.0, 36.0), (0.0, 38.0)]
+--------------------------------------------------------------------------------
+[95m                             Prefix Caching Results                             [0m
+--------------------------------------------------------------------------------
+Total requested prompt tokens:                                      21027
+NPU prefix hit prompt tokens:                                       4512
+NPU prefix hit ratio (%):                                           21.46
+CXL prefix hit prompt tokens:                                       278
+CXL prefix hit ratio (%):                                           1.32
+Total prefix hit ratio (%):                                         22.78
+--------------------------------------------------------------------------------
+[95m                                  Instance [0]                                  [0m
+--------------------------------------------------------------------------------
+------------------------------Time to First Token-------------------------------
+Mean TTFT (ms):                                                     100.86
+Median TTFT (ms):                                                   79.56
+P99 TTFT (ms):                                                      297.70
+--------------------Time per Output Token (excl. 1st token)---------------------
+Mean TPOT (ms):                                                     38.47
+Median TPOT (ms):                                                   37.47
+P99 TPOT (ms):                                                      80.94
+------------------------------Inter-token Latency-------------------------------
+Mean ITL (ms):                                                      35.06
+Median ITL (ms):                                                    31.04
+P99 ITL (ms):                                                       147.54
+----------------------------KV Cache Tier Statistics----------------------------
+NPU→CPU evictions:        0 events,       0.00 MB
+CPU→NPU reloads:          0 events,       0.00 MB
+NPU prefix evictions:     0 events,       0.00 MB
+Storage prefix evict:     0 events,       0.00 MB
+Storage→NPU prefix:       0 events,       0.00 MB
+Evicted→Storage:          0 events,       0.00 MB
+Total data moved:                                                    0.00 MB
+--------------------------------------------------------------------------------
+Saving each request's information to output file: output/tiered_kv/phaseB/prefix_cxl/sharegpt_100/result.csv
+Saving tier stats to: /home/marvell/LLMServingSim/output/tiered_kv/phaseB/prefix_cxl/sharegpt_100/result_tier_stats.json
+Saved time-series metrics to: output/tiered_kv/phaseB/prefix_cxl/sharegpt_100/timeseries.csv

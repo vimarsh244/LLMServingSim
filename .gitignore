@@ -4,7 +4,15 @@ env/
 # Ignore python cache
 *.pyc
 __pycache__/
+**/__pycache__/
 *.joblib
 
 # Ignore pkl files
 *.pkl
+*.png
+*.log
+*.tmp
+*.swp
+
+
+output/

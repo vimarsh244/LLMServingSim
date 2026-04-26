@@ -1,9 +1,9 @@
-# #!/bin/bash
+#!/bin/bash
 
 # Single instance example
 python main.py --cluster-config 'cluster_config/single_node_single_instance.json' \
     --fp 16 --block-size 16 \
-    --dataset '/dataset/example_trace.jsonl' --output 'output/example_single_run.csv' \
+    --dataset 'dataset/example_trace.jsonl' --output 'output/example_single_run.csv' \
     --num-req 100 --log-interval 1.0
 
 # Multi instance example
@@ -39,21 +39,21 @@ python main.py --cluster-config 'cluster_config/single_node_cxl_instance.json' \
 # Prefix cache with cpu mem example
 python main.py --cluster-config 'cluster_config/single_node_single_instance.json' \
     --fp 16 --block-size 16 --enable-prefix-caching \
-    --dataset '/dataset/example_trace.jsonl' --output 'output/example_prefix_cpu_mem_run.csv' \
+    --dataset 'dataset/example_trace.jsonl' --output 'output/example_prefix_cpu_mem_run.csv' \
     --num-req 10
 
 # Prefix cache with CPU Prefix Cache Pool example (Single Node)
 python main.py --cluster-config 'cluster_config/single_node_multi_instance.json' \
      --fp 16 --block-size 16 \
     --enable-prefix-caching --enable-prefix-sharing --prefix-storage CPU \
-    --dataset '/dataset/example_trace.jsonl' --output 'output/example_prefix_cpu_mem_pool_run.csv' \
+    --dataset 'dataset/example_trace.jsonl' --output 'output/example_prefix_cpu_mem_pool_run.csv' \
     --num-req 10
 
 # Prefix cache with CPU Prefix Cache Pool example (Dual Node)
 python main.py --cluster-config 'cluster_config/dual_node_multi_instance.json' \
     --fp 16 --block-size 16 \
     --enable-prefix-caching --enable-prefix-sharing --prefix-storage CPU \
-    --dataset '/dataset/example_trace.jsonl' --output 'output/example_dual_prefix_cpu_mem_pool_run.csv' \
+    --dataset 'dataset/example_trace.jsonl' --output 'output/example_dual_prefix_cpu_mem_pool_run.csv' \
     --num-req 10
 
 # Power model example

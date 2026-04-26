@@ -1,0 +1,6 @@
+config,workload,mean_TTFT_ms,p99_TTFT_ms,mean_TPOT_ms,p99_TPOT_ms,mean_ITL_ms,total_requests,mean_prefix_hit
+70b_npu_cpu,fixed_256,36751.52,74610.58,44.1,68.01,44.1,256,0.0
+70b_npu_cpu,prefix_stress,30.25,40.83,20.84,21.02,20.84,20,0.0
+70b_npu_cpu,pulse_prefix,205.31,3571.63,25.85,42.58,25.85,300,0.0
+70b_npu_cpu,sharegpt_100,910.44,5421.62,32.39,83.0,32.39,100,0.0
+70b_npu_cpu,sharegpt_300,21634.63,50108.78,51.36,174.14,51.36,300,0.0

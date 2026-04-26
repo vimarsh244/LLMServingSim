@@ -1,0 +1,16 @@
+{
+  "instance_0": {
+    "evict_npu_to_cpu_bytes": 2785017856,
+    "evict_npu_to_cpu_count": 89,
+    "load_cpu_to_npu_bytes": 2785017856,
+    "load_cpu_to_npu_count": 46,
+    "evict_npu_prefix_bytes": 0,
+    "evict_npu_prefix_count": 0,
+    "evict_storage_prefix_bytes": 0,
+    "evict_storage_prefix_count": 0,
+    "prefix_load_storage_to_npu_bytes": 0,
+    "prefix_load_storage_to_npu_count": 0,
+    "storage_cache_evicted_req_bytes": 0,
+    "storage_cache_evicted_req_count": 0
+  }
+}

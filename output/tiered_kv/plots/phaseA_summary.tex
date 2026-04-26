@@ -1,0 +1,15 @@
+\begin{table}
+\caption{Tiered KV Cache Experiment Summary}
+\label{tab:tiered_kv_summary}
+\begin{tabular}{llrrrrrrr}
+\toprule
+config & workload & mean_TTFT_ms & p99_TTFT_ms & mean_TPOT_ms & p99_TPOT_ms & mean_ITL_ms & total_requests & mean_prefix_hit \\
+\midrule
+npu_cpu & fixed_256 & 30329.40 & 86570.41 & 86.39 & 135.92 & 86.39 & 256 & 0.00 \\
+npu_cpu & prefix_stress & 37.64 & 50.69 & 26.11 & 26.86 & 26.11 & 20 & 0.00 \\
+npu_cpu & pulse_prefix & 165.98 & 591.07 & 34.45 & 68.96 & 34.45 & 300 & 0.00 \\
+npu_cpu & sharegpt_100 & 128.02 & 349.43 & 42.26 & 99.93 & 42.26 & 100 & 0.00 \\
+npu_cpu & sharegpt_300 & 25588.31 & 66950.84 & 106.45 & 267.88 & 106.45 & 300 & 0.00 \\
+\bottomrule
+\end{tabular}
+\end{table}

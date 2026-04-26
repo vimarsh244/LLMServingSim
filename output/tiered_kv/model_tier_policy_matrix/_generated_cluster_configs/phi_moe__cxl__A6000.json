@@ -1,0 +1,43 @@
+{
+    "num_nodes": 1,
+    "link_bw": 112,
+    "link_latency": 0,
+    "nodes": [
+        {
+            "num_instances": 1,
+            "cpu_mem": {
+                "mem_size": 128,
+                "mem_bw": 220,
+                "mem_latency": 110
+            },
+            "instances": [
+                {
+                    "model_name": "microsoft/Phi-mini-MoE-instruct",
+                    "hardware": "A6000",
+                    "npu_mem": {
+                        "mem_size": 16,
+                        "mem_bw": 768,
+                        "mem_latency": 0
+                    },
+                    "npu_num": 1,
+                    "npu_group": 1,
+                    "pd_type": null,
+                    "placement": {
+                        "default": {
+                            "weights": "npu",
+                            "kv_loc": "npu",
+                            "kv_evict_loc": "cxl"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "external_kv_tier": {
+        "name": "CXL",
+        "mem_size": 2048,
+        "mem_latency": 200,
+        "mem_bw": 64,
+        "num_devices": 1
+    }
+}

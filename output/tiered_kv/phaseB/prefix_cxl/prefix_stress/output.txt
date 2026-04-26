@@ -1,0 +1,116 @@
+================================================================================
+[1m                                LLMServingSim2.0                                [0m
+[95m  A Unified Simulator for Heterogeneous Hardware and Serving Techniques in LLM  [0m
+================================================================================
+[96m     _    _    __  __ ___              _           ___ _       ___   __  
+    | |  | |  |  \/  / __| ___ _ ___ _(_)_ _  __ _/ __(_)_ __ |_  ) /  \ 
+    | |__| |__| |\/| \__ \/ -_) '_\ V / | ' \/ _` \__ \ | '  \ / / | () |
+    |____|____|_|  |_|___/\___|_|  \_/|_|_||_\__, |___/_|_|_|_/___(_)__/ 
+                                             |___/       [0m
+--------------------------------------------------------------------------------
+[95m                              Input configuration                               [0m
+
+  • [96mCluster config               [0m : cluster_config/tiered_kv_prefix_cxl.json
+  • [96mDataset                      [0m : dataset/prefix_pool_stress.jsonl
+  • [96mNum requests                 [0m : 100
+  • [96mMax batch                    [0m : inf
+  • [96mMax batched tokens           [0m : 2048
+  • [96mBlock size (tokens)          [0m : 16
+  • [96mFP precision                 [0m : 16-bit
+  • [96mRequest routing              [0m : RR
+  • [96mExpert routing               [0m : FAST
+  • [96mPrefix caching               [0m : ENABLED
+  • [96mPrefix caching scheme        [0m : xPU + CXL
+  • [96mCentralized prefix caching   [0m : DISABLED
+  • [96mOffload attention to PIM     [0m : DISABLED
+  • [96mSub-batch interleaving       [0m : DISABLED
+  • [96mRealtime attention prediction[0m : DISABLED
+  • [96mPrioritize prefill           [0m : DISABLED
+  • [96mNetwork backend              [0m : analytical
+  • [96mLog interval (s)             [0m : 0.5
+  • [96mLog level                    [0m : WARNING
+--------------------------------------------------------------------------------
+[1m[96m▶ Starting simulation...
+[0m[0m
+[0.5s] [94mAvg prompt throughput: 216.0 tokens/s,[0m [94mAvg generation throughput: 218.0 tokens/s[0m
+        ├─Running Instance[0]: 10 reqs, Total # 1 NPUs, Each NPU Memory Usage 15332.51 MB (62.388 % Used), Prefix Cache Hit ratio 0.00 %, (0 / 118)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 20.75 MB, 0.000 % Used
+[1.0s] [94mAvg prompt throughput: 366.0 tokens/s,[0m [94mAvg generation throughput: 480.0 tokens/s[0m
+        ├─Running Instance[0]: 14 reqs, Total # 1 NPUs, Each NPU Memory Usage 15372.51 MB (62.551 % Used), Prefix Cache Hit ratio 5.50 %, (16 / 291)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 60.75 MB, 0.000 % Used
+[1.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 344.0 tokens/s[0m
+        ├─Running Instance[0]: 5 reqs, Total # 1 NPUs, Each NPU Memory Usage 15390.51 MB (62.624 % Used), Prefix Cache Hit ratio 5.50 %, (16 / 291)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 80.50 MB, 0.000 % Used
+[2.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 136.0 tokens/s[0m
+        ├─Running Instance[0]: 1 reqs, Total # 1 NPUs, Each NPU Memory Usage 15400.51 MB (62.665 % Used), Prefix Cache Hit ratio 5.50 %, (16 / 291)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 88.50 MB, 0.000 % Used
+[2.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 40.0 tokens/s[0m
+        ├─Running Instance[0]: 1 reqs, Total # 1 NPUs, Each NPU Memory Usage 15402.51 MB (62.673 % Used), Prefix Cache Hit ratio 5.50 %, (16 / 291)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 91.00 MB, 0.000 % Used
+[3.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 42.0 tokens/s[0m
+        ├─Running Instance[0]: 0 reqs, Total # 1 NPUs, Each NPU Memory Usage 15406.51 MB (62.689 % Used), Prefix Cache Hit ratio 5.50 %, (16 / 291)
+        ├─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+        └─CXL[0]: Total CXL Device Memory Usage 93.50 MB, 0.000 % Used
+--------------------------------------------------------------------------------
+[1m[96m▶ Exiting simulation...
+[0m[0m
+Checking Non-Exited Systems ...
+All Request Has Been Exited
+--------------------------------------------------------------------------------
+[1m[96m▶ Simulation results...
+[0m[0m
+Total simulation time: 0h 0m 6.662s
+--------------------------------------------------------------------------------
+[95m                               Throughput Results                               [0m
+--------------------------------------------------------------------------------
+Total requests:                                                     20
+Total clocks (ns):                                                  3022184742
+Total latency (s):                                                  3.022
+Total input tokens:                                                 291
+Total generated tokens:                                             630
+Request throughput (req/s):                                         6.62
+Average prompt throughput (tok/s):                                  96.29
+Average generation throughput (tok/s):                              208.46
+Total token throughput (tok/s):                                     304.75
+Throughput per 0.5 sec: [(216.0, 218.0), (366.0, 480.0), (0.0, 344.0), (0.0, 136.0), (0.0, 40.0), (0.0, 42.0)]
+--------------------------------------------------------------------------------
+[95m                             Prefix Caching Results                             [0m
+--------------------------------------------------------------------------------
+Total requested prompt tokens:                                      291
+NPU prefix hit prompt tokens:                                       16
+NPU prefix hit ratio (%):                                           5.50
+CXL prefix hit prompt tokens:                                       111
+CXL prefix hit ratio (%):                                           38.14
+Total prefix hit ratio (%):                                         43.64
+--------------------------------------------------------------------------------
+[95m                                  Instance [0]                                  [0m
+--------------------------------------------------------------------------------
+------------------------------Time to First Token-------------------------------
+Mean TTFT (ms):                                                     36.83
+Median TTFT (ms):                                                   36.28
+P99 TTFT (ms):                                                      50.95
+--------------------Time per Output Token (excl. 1st token)---------------------
+Mean TPOT (ms):                                                     26.05
+Median TPOT (ms):                                                   26.15
+P99 TPOT (ms):                                                      26.74
+------------------------------Inter-token Latency-------------------------------
+Mean ITL (ms):                                                      25.84
+Median ITL (ms):                                                    25.60
+P99 ITL (ms):                                                       29.45
+----------------------------KV Cache Tier Statistics----------------------------
+NPU→CPU evictions:        0 events,       0.00 MB
+CPU→NPU reloads:          0 events,       0.00 MB
+NPU prefix evictions:     0 events,       0.00 MB
+Storage prefix evict:     0 events,       0.00 MB
+Storage→NPU prefix:       0 events,       0.00 MB
+Evicted→Storage:          0 events,       0.00 MB
+Total data moved:                                                    0.00 MB
+--------------------------------------------------------------------------------
+Saving each request's information to output file: output/tiered_kv/phaseB/prefix_cxl/prefix_stress/result.csv
+Saving tier stats to: /home/marvell/LLMServingSim/output/tiered_kv/phaseB/prefix_cxl/prefix_stress/result_tier_stats.json
+Saved time-series metrics to: output/tiered_kv/phaseB/prefix_cxl/prefix_stress/timeseries.csv

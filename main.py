@@ -4,6 +4,7 @@ import argparse
 import json
 from time import time
 from collections import defaultdict
+import csv as csv_module
 
 from inference_serving.scheduler import *
 from inference_serving.request import *
@@ -17,9 +18,24 @@ from inference_serving.config_builder import *
 from inference_serving.router import *
 from inference_serving.power_model import *
 from inference_serving.logger import *
+from inference_serving.eviction_policies import get_registered_policy_names
 import sys as flush
 
 from pyinstrument import Profiler
+
+
+class _TeeStream:
+    def __init__(self, *streams):
+        self._streams = streams
+
+    def write(self, data):
+        for stream in self._streams:
+            stream.write(data)
+        return len(data)
+
+    def flush(self):
+        for stream in self._streams:
+            stream.flush()
 
 
 def main():
@@ -51,13 +67,117 @@ def main():
     parser.add_argument('--block-size', type=int, help='kv cache block size unit of tokens', default=16)
     parser.add_argument('--dataset', type=str, help='dataset path', default=None)
     parser.add_argument('--output', type=str, help='output path', default=None)
+    parser.add_argument('--timeseries-output', type=str, help='path for time-series CSV of per-interval memory/cache metrics', default=None)
+    parser.add_argument('--stdout-log', type=str, help='optional path to mirror stdout/stderr logs', default=None)
     parser.add_argument('--gen', action='store_false', default=True, help='skip initiation phase')
     parser.add_argument('--num-req', type=int, help='number of requests to use', default=100)
     parser.add_argument('--log-interval', type=float, help='interval to log throughput (sec)', default=0.5)
     parser.add_argument('--log-level', type=str, choices=['WARNING', 'INFO', 'DEBUG'], help='log level to use', default='WARNING')
     parser.add_argument('--network-backend', type=str, choices=['analytical', 'ns3'], help='network backend to use', default='analytical')
+    policy_choices = get_registered_policy_names()
+    parser.add_argument(
+        '--kv-eviction-policy',
+        type=str,
+        choices=policy_choices,
+        help=(
+            "policy for selecting decode requests to preempt when NPU KV memory is full "
+            f"({', '.join(policy_choices)}). If omitted, falls back to cluster_config.kv_eviction_policy or 'tail'."
+        ),
+        default=None,
+    )
+    parser.add_argument(
+        '--evicpress-alpha',
+        type=float,
+        default=1.0,
+        help='quality-vs-delay tradeoff coefficient for EVICPRESS utility scoring',
+    )
+    parser.add_argument(
+        '--evicpress-ratios',
+        type=str,
+        default='1.0,0.75,0.5,0.25',
+        help='comma-separated compression keep ratios in (0,1], used by EVICPRESS',
+    )
+    parser.add_argument(
+        '--evicpress-methods',
+        type=str,
+        default='balanced',
+        help='comma-separated EVICPRESS compression methods/profiles (none, balanced, kivi, kvquant, gearkv, h2o, trace)',
+    )
+    parser.add_argument(
+        '--evicpress-compression-trace',
+        type=str,
+        default='',
+        help='optional path to JSON/CSV ratio-sensitivity trace; required when --evicpress-methods includes trace',
+    )
+    parser.add_argument(
+        '--harp-grace-candidates',
+        type=str,
+        default='16,32,64',
+        help='comma-separated grace-token candidates for HARP shadow state',
+    )
+    parser.add_argument(
+        '--harp-ratios',
+        type=str,
+        default='1.0,0.75,0.5,0.25',
+        help='comma-separated compression keep ratios in (0,1], used by HARP',
+    )
+    parser.add_argument('--harp-lambda-stall', type=float, default=1.0, help='HARP stall penalty weight')
+    parser.add_argument('--harp-lambda-quality', type=float, default=0.5, help='HARP quality penalty weight')
+    parser.add_argument('--harp-lambda-fairness', type=float, default=0.1, help='HARP fairness debt penalty weight')
+    parser.add_argument('--harp-fairness-epsilon', type=float, default=1e-6, help='HARP fairness denominator epsilon')
+    parser.add_argument(
+        '--harp-compression-profile',
+        type=str,
+        default='balanced',
+        help='HARP compression profile preset (none, balanced, kivi, kvquant, gearkv, h2o)',
+    )
+    parser.add_argument(
+        '--harp-compression-trace',
+        type=str,
+        default='',
+        help='optional path to JSON/CSV ratio-sensitivity trace for HARP compression modeling',
+    )
+    parser.add_argument(
+        '--adaptive-dynmax-schedule',
+        type=str,
+        choices=['linear'],
+        default='linear',
+        help='adaptive DynMax schedule mode',
+    )
+    parser.add_argument('--adaptive-dynmax-progress-start', type=float, default=0.10,
+                        help='progress ratio where adaptive DynMax starts decaying proactivity')
+    parser.add_argument('--adaptive-dynmax-progress-end', type=float, default=0.75,
+                        help='progress ratio where adaptive DynMax reaches its final setting')
+    parser.add_argument('--adaptive-dynmax-final-trigger', type=float, default=1.05,
+                        help='final proactive trigger ratio for adaptive DynMax')
+    parser.add_argument('--adaptive-dynmax-final-target', type=float, default=0.92,
+                        help='final proactive target ratio for adaptive DynMax')
+    parser.add_argument('--adaptive-dynmax-final-steps-ahead', type=int, default=12,
+                        help='final lookahead horizon for adaptive DynMax proactive eviction')
+    parser.add_argument('--adaptive-dynmax-final-max-actions', type=int, default=1,
+                        help='final proactive action budget for adaptive DynMax')
+    parser.add_argument('--enable-proactive-eviction', action='store_true', default=False,
+                        help='enable proactive KV eviction under projected NPU memory pressure (HARP/DynMax)')
+    parser.add_argument('--proactive-steps-ahead', type=int, default=32,
+                        help='decode steps used for projected NPU memory pressure forecast')
+    parser.add_argument('--proactive-trigger', type=float, default=0.85,
+                        help='projected pressure ratio threshold to trigger proactive eviction')
+    parser.add_argument('--proactive-target', type=float, default=0.70,
+                        help='projected pressure ratio target after proactive eviction')
+    parser.add_argument('--proactive-max-actions', type=int, default=2,
+                        help='maximum proactive eviction actions per scheduler tick')
 
     args = parser.parse_args()
+
+    if args.stdout_log:
+        if os.path.isabs(args.stdout_log):
+            stdout_log_path = args.stdout_log
+        else:
+            stdout_log_path = os.path.join(cwd, args.stdout_log)
+        os.makedirs(os.path.dirname(stdout_log_path), exist_ok=True)
+        stdout_log_file = open(stdout_log_path, "w", encoding="utf-8")
+        flush.stdout = _TeeStream(flush.stdout, stdout_log_file)
+        flush.stderr = _TeeStream(flush.stderr, stdout_log_file)
 
     print_logo()
     print_input_config(args=args)
@@ -89,10 +209,55 @@ def main():
     prioritize_prefill=args.prioritize_prefill
     dataset=args.dataset
     output_file=args.output
+    timeseries_output=args.timeseries_output
     is_init=args.gen
     num_req=args.num_req
     log_interval=args.log_interval
     network_backend = args.network_backend
+    kv_eviction_policy_arg = args.kv_eviction_policy
+    evicpress_alpha = args.evicpress_alpha
+    try:
+        evicpress_ratios = [float(v.strip()) for v in str(args.evicpress_ratios).split(',') if v.strip()]
+    except ValueError as exc:
+        raise ValueError(f"Invalid --evicpress-ratios '{args.evicpress_ratios}': {exc}")
+    if not evicpress_ratios:
+        raise ValueError("--evicpress-ratios produced an empty list. Provide values in (0,1].")
+    evicpress_methods = [v.strip().lower() for v in str(args.evicpress_methods).split(',') if v.strip()]
+    if not evicpress_methods:
+        raise ValueError("--evicpress-methods produced an empty list. Provide at least one method name.")
+    evicpress_compression_trace = str(args.evicpress_compression_trace or '')
+    try:
+        harp_grace_candidates = [int(v.strip()) for v in str(args.harp_grace_candidates).split(',') if v.strip()]
+    except ValueError as exc:
+        raise ValueError(f"Invalid --harp-grace-candidates '{args.harp_grace_candidates}': {exc}")
+    if not harp_grace_candidates:
+        raise ValueError("--harp-grace-candidates produced an empty list. Provide non-negative integers.")
+
+    try:
+        harp_ratios = [float(v.strip()) for v in str(args.harp_ratios).split(',') if v.strip()]
+    except ValueError as exc:
+        raise ValueError(f"Invalid --harp-ratios '{args.harp_ratios}': {exc}")
+    if not harp_ratios:
+        raise ValueError("--harp-ratios produced an empty list. Provide values in (0,1].")
+
+    harp_lambda_stall = float(args.harp_lambda_stall)
+    harp_lambda_quality = float(args.harp_lambda_quality)
+    harp_lambda_fairness = float(args.harp_lambda_fairness)
+    harp_fairness_epsilon = float(args.harp_fairness_epsilon)
+    harp_compression_profile = str(args.harp_compression_profile)
+    harp_compression_trace = str(args.harp_compression_trace or '')
+    adaptive_dynmax_schedule = str(args.adaptive_dynmax_schedule)
+    adaptive_dynmax_progress_start = float(args.adaptive_dynmax_progress_start)
+    adaptive_dynmax_progress_end = float(args.adaptive_dynmax_progress_end)
+    adaptive_dynmax_final_trigger = float(args.adaptive_dynmax_final_trigger)
+    adaptive_dynmax_final_target = float(args.adaptive_dynmax_final_target)
+    adaptive_dynmax_final_steps_ahead = int(args.adaptive_dynmax_final_steps_ahead)
+    adaptive_dynmax_final_max_actions = int(args.adaptive_dynmax_final_max_actions)
+    enable_proactive_eviction = bool(args.enable_proactive_eviction)
+    proactive_steps_ahead = int(args.proactive_steps_ahead)
+    proactive_trigger = float(args.proactive_trigger)
+    proactive_target = float(args.proactive_target)
+    proactive_max_actions = int(args.proactive_max_actions)
     # ---------------------------------- Extract cluster config -----------------------------------
     cluster = build_cluster_config(astra_sim, args.cluster_config, args.enable_local_offloading, args.enable_attn_offloading)
     num_nodes = cluster["num_nodes"]
@@ -112,6 +277,10 @@ def main():
     power_modeling = cluster["power_modeling"]
     power_configs = cluster["power_configs"]
     pim_models = cluster["pim_models"]
+    external_tier_name = cluster.get("external_tier_name", "CXL")
+    external_tier_bw = cluster.get("external_tier_bw", 0)
+    external_tier_latency = cluster.get("external_tier_latency", 0)
+    kv_eviction_policy = kv_eviction_policy_arg or cluster.get("kv_eviction_policy", "tail")
     # ----------------------------------------- Set config -----------------------------------------
     # Automatic network, memory configuration
     # If you want to set more specific information such as latency, look at config.py and each json file
@@ -194,13 +363,28 @@ def main():
         cxl_mem = 0
         if cluster["cxl_mem_size"] > 0:
             cxl_mem = cluster["cxl_mem_size"]        
+        node_id = instance["node_id"]
+        cpu_tier_bw = cluster["cpu_mem_bw"][node_id]
+        cpu_tier_latency = cluster["cpu_mem_latency"][node_id]
         
         # Make scheduler for each instance
         schedulers.append(Scheduler(
             instance["model_name"], instance["node_id"], instance_id, max_batch, max_num_batched_tokens,
             instance["npu_num"], instance["npu_group"], instance["npu_mem"]["mem_size"], cpu_mem_size[instance["node_id"]],
             inst2npu_mapping[instance_id], instance["pd_type"], fp, block_size, num_req, 
-            prioritize_prefill, enable_prefix_caching, enable_prefix_sharing, prefix_pool, pool_device, cxl_mem
+            prioritize_prefill, enable_prefix_caching, enable_prefix_sharing, prefix_pool, pool_device,
+            cxl_mem, kv_eviction_policy, external_tier_name,
+            cpu_tier_bw, cpu_tier_latency, external_tier_bw, external_tier_latency,
+            evicpress_alpha, evicpress_ratios,
+            harp_grace_candidates, harp_ratios,
+            harp_lambda_stall, harp_lambda_quality, harp_lambda_fairness,
+            harp_fairness_epsilon, harp_compression_profile, harp_compression_trace,
+            adaptive_dynmax_schedule, adaptive_dynmax_progress_start,
+            adaptive_dynmax_progress_end, adaptive_dynmax_final_trigger,
+            adaptive_dynmax_final_target, adaptive_dynmax_final_steps_ahead,
+            adaptive_dynmax_final_max_actions,
+            enable_proactive_eviction, proactive_steps_ahead,
+            proactive_trigger, proactive_target, proactive_max_actions
         ))
 
     # Controller for astra-sim process communication
@@ -220,7 +404,7 @@ def main():
         # Manually adding request
         for i in range(16):      # seq_len, end_len, arrival_time, instance_id
             for sched in schedulers:
-                sched.add_reqeust([i, sched.model, 64, 128, 0, i % num_instances])
+                sched.add_request([i, sched.model, 64, 128, 0, i % num_instances])
 
     # Simulator start
     current = 0 # current tick of the system
@@ -269,6 +453,33 @@ def main():
     p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
 
     # ----------------------------------- Start simulation loop ------------------------------------
+    # Open time-series CSV if requested
+    ts_csv_file = None
+    ts_csv_writer = None
+    if timeseries_output:
+        ts_csv_path = os.path.join(cwd, timeseries_output)
+        os.makedirs(os.path.dirname(ts_csv_path), exist_ok=True) if os.path.dirname(ts_csv_path) else None
+        ts_csv_file = open(ts_csv_path, 'w', newline='')
+        ts_csv_writer = csv_module.writer(ts_csv_file)
+        ts_csv_writer.writerow([
+            'sim_time_ns', 'instance_id',
+            'npu_used_bytes', 'npu_total_bytes',
+            'cpu_used_bytes', 'cpu_total_bytes',
+            'cxl_used_bytes', 'cxl_total_bytes',
+            'npu_prefix_tokens', 'storage_prefix_tokens',
+            'evictable_tokens', 'protected_tokens',
+            'npu_hit_total', 'storage_hit_total',
+            'npu_hit_interval', 'storage_hit_interval', 'npu_hit_rate_interval',
+            'prompt_throughput', 'gen_throughput',
+            'evict_npu_to_cpu_bytes_total', 'load_cpu_to_npu_bytes_total',
+            'evict_npu_to_cxl_bytes_total', 'load_cxl_to_npu_bytes_total',
+            'evict_npu_prefix_bytes_total', 'evict_storage_prefix_bytes_total',
+            'prefix_load_storage_to_npu_bytes_total',
+            'harp_hot_reqs', 'harp_shadow_reqs', 'harp_cold_reqs',
+            'harp_prefetch_remaining_bytes', 'harp_prefetch_overlap_ratio',
+            'harp_stall_time_ns_total', 'harp_shadow_hit_rate',
+        ])
+
     # Starting simulation, one while loop processes one iteration
     while True:
         out = controller.read_wait(p)
@@ -417,6 +628,60 @@ def main():
                 tree_indent = '└─'
                 print(f"{log_indent+tree_indent}Avg power consumption: {power_model.get_current_power(current)} W")
 
+            # Write time-series CSV rows
+            if ts_csv_writer:
+                for inst_id in range(num_instances):
+                    mem = schedulers[inst_id].memory
+                    npu_prefix_tokens = 0
+                    storage_prefix_tokens = 0
+                    evictable_tokens = 0
+                    protected_tokens = 0
+                    npu_hit_total = 0
+                    storage_hit_total = 0
+                    npu_hit_interval = 0
+                    storage_hit_interval = 0
+                    npu_hit_rate_interval = 0.0
+
+                    if enable_prefix_caching:
+                        npu_prefix_tokens = mem.npu_prefix_cache.total_size()
+                        evictable_tokens = mem.npu_prefix_cache.evictable_size()
+                        protected_tokens = mem.npu_prefix_cache.protected_size()
+                        npu_hit_total = mem.npu_prefix_cache.total_hit_tokens
+                        _, npu_hit_interval, npu_hit_rate_interval = mem.npu_prefix_cache.get_interval_hit_rate()
+
+                        if hasattr(mem, 'second_tier_prefix_cache') and mem.second_tier_prefix_cache is not None:
+                            storage_prefix_tokens = mem.second_tier_prefix_cache.total_size()
+                            storage_hit_total = mem.second_tier_prefix_cache.total_hit_tokens
+                            _, storage_hit_interval, _ = mem.second_tier_prefix_cache.get_interval_hit_rate()
+
+                    ts = schedulers[inst_id].tier_stats
+                    harp_counts = schedulers[inst_id].get_harp_state_counts()
+                    harp_overlap_ratio = 0.0
+                    if ts['harp_prefetch_bytes_total'] > 0:
+                        harp_overlap_ratio = ts['harp_prefetch_overlap_bytes'] / ts['harp_prefetch_bytes_total']
+                    harp_shadow_hit_rate = 0.0
+                    if ts['harp_decode_tokens_total'] > 0:
+                        harp_shadow_hit_rate = ts['harp_shadow_hit_tokens'] / ts['harp_decode_tokens_total']
+                    ts_csv_writer.writerow([
+                        int(last_log), inst_id,
+                        int(mem.npu_used), int(mem.npu_mem),
+                        int(mem.cpu_used), int(mem.cpu_mem),
+                        int(mem.cxl_used), int(mem.cxl_mem),
+                        npu_prefix_tokens, storage_prefix_tokens,
+                        evictable_tokens, protected_tokens,
+                        npu_hit_total, storage_hit_total,
+                        npu_hit_interval, storage_hit_interval, f"{npu_hit_rate_interval:.2f}",
+                        int(prompt_th * RATIO), int(gen_th * RATIO),
+                        ts['evict_npu_to_cpu_bytes'], ts['load_cpu_to_npu_bytes'],
+                        ts['evict_npu_to_cxl_bytes'], ts['load_cxl_to_npu_bytes'],
+                        ts['evict_npu_prefix_bytes'], ts['evict_storage_prefix_bytes'],
+                        ts['prefix_load_storage_to_npu_bytes'],
+                        harp_counts['hot'], harp_counts['shadow'], harp_counts['cold'],
+                        int(harp_counts['prefetch_remaining_bytes']), f"{harp_overlap_ratio:.6f}",
+                        int(ts['harp_stall_time_ns']), f"{harp_shadow_hit_rate:.6f}",
+                    ])
+                ts_csv_file.flush()
+
         # check if all requests are done for current instance
         if (instance_id not in decode_instance or is_prefill_done) and instance_id not in done_instance and schedulers[instance_id].is_request_empty():
             if sys not in done_inst_npus[instance_id]:
@@ -522,6 +787,18 @@ def main():
         print(magenta(center(f"Instance [{i}]")))
         print(SINGLE_BAR)
         schedulers[i].print_result()
+        schedulers[i].print_tier_stats()
+        acc_ok, req_totals, acc_deltas = schedulers[i].validate_tier_accounting()
+        if acc_ok:
+            print("Tier accounting check:                                             PASS")
+        else:
+            print("Tier accounting check:                                             WARNING")
+            print("Request-tier totals and scheduler-tier totals do not match.")
+            print(f"  evict_npu_to_cpu_bytes delta:                                   {acc_deltas['evict_npu_to_cpu_bytes']}")
+            print(f"  evict_npu_to_cxl_bytes delta:                                   {acc_deltas['evict_npu_to_cxl_bytes']}")
+            print(f"  load_cpu_to_npu_bytes delta:                                    {acc_deltas['load_cpu_to_npu_bytes']}")
+            print(f"  load_cxl_to_npu_bytes delta:                                    {acc_deltas['load_cxl_to_npu_bytes']}")
+        print(f"Request-level transition bytes total:                             {req_totals['tier_transition_bytes_total']}")
         print(SINGLE_BAR)
     
     # Important informations about metrics
@@ -535,6 +812,22 @@ def main():
         print(f"Saving each request's information to output file: {output_file}")
         for i in range(num_instances):
             schedulers[i].save_output(output_file, is_append=False if i == 0 else True)
+
+    # Save tier stats JSON alongside the output file
+    if output_file is not None:
+        tier_stats_path = os.path.join(cwd, output_file.replace('.csv', '_tier_stats.json'))
+        os.makedirs(os.path.dirname(tier_stats_path), exist_ok=True) if os.path.dirname(tier_stats_path) else None
+        all_tier_stats = {}
+        for i in range(num_instances):
+            all_tier_stats[f"instance_{i}"] = schedulers[i].tier_stats
+        with open(tier_stats_path, 'w') as f:
+            json.dump(all_tier_stats, f, indent=2)
+        print(f"Saving tier stats to: {tier_stats_path}")
+
+    # Close time-series CSV
+    if ts_csv_file:
+        ts_csv_file.close()
+        print(f"Saved time-series metrics to: {timeseries_output}")
     
 
 if __name__ == "__main__":

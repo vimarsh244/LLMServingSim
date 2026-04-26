@@ -1,0 +1,100 @@
+================================================================================
+[1m                                LLMServingSim2.0                                [0m
+[95m  A Unified Simulator for Heterogeneous Hardware and Serving Techniques in LLM  [0m
+================================================================================
+[96m     _    _    __  __ ___              _           ___ _       ___   __  
+    | |  | |  |  \/  / __| ___ _ ___ _(_)_ _  __ _/ __(_)_ __ |_  ) /  \ 
+    | |__| |__| |\/| \__ \/ -_) '_\ V / | ' \/ _` \__ \ | '  \ / / | () |
+    |____|____|_|  |_|___/\___|_|  \_/|_|_||_\__, |___/_|_|_|_/___(_)__/ 
+                                             |___/       [0m
+--------------------------------------------------------------------------------
+[95m                              Input configuration                               [0m
+
+  • [96mCluster config               [0m : cluster_config/tiered_kv_70b_npu_cpu.json
+  • [96mDataset                      [0m : dataset/prefix_pool_stress.jsonl
+  • [96mNum requests                 [0m : 100
+  • [96mMax batch                    [0m : inf
+  • [96mMax batched tokens           [0m : 2048
+  • [96mBlock size (tokens)          [0m : 16
+  • [96mFP precision                 [0m : 16-bit
+  • [96mRequest routing              [0m : RR
+  • [96mExpert routing               [0m : FAST
+  • [96mPrefix caching               [0m : DISABLED
+  • [96mPrefix caching scheme        [0m : xPU-Only
+  • [96mCentralized prefix caching   [0m : DISABLED
+  • [96mOffload attention to PIM     [0m : DISABLED
+  • [96mSub-batch interleaving       [0m : DISABLED
+  • [96mRealtime attention prediction[0m : DISABLED
+  • [96mPrioritize prefill           [0m : DISABLED
+  • [96mNetwork backend              [0m : analytical
+  • [96mLog interval (s)             [0m : 0.5
+  • [96mLog level                    [0m : WARNING
+--------------------------------------------------------------------------------
+[1m[96m▶ Starting simulation...
+[0m[0m
+[0.5s] [94mAvg prompt throughput: 216.0 tokens/s,[0m [94mAvg generation throughput: 248.0 tokens/s[0m
+        ├─Running Instance[0]: 10 reqs, Total # 4 NPUs, Each NPU Memory Usage 33668.27 MB (96.703 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[1.0s] [94mAvg prompt throughput: 366.0 tokens/s,[0m [94mAvg generation throughput: 516.0 tokens/s[0m
+        ├─Running Instance[0]: 13 reqs, Total # 4 NPUs, Each NPU Memory Usage 33687.02 MB (96.757 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[1.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 354.0 tokens/s[0m
+        ├─Running Instance[0]: 4 reqs, Total # 4 NPUs, Each NPU Memory Usage 33668.27 MB (96.703 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[2.0s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 86.0 tokens/s[0m
+        ├─Running Instance[0]: 1 reqs, Total # 4 NPUs, Each NPU Memory Usage 33654.52 MB (96.664 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+[2.5s] [94mAvg prompt throughput: 0.0 tokens/s,[0m [94mAvg generation throughput: 50.0 tokens/s[0m
+        ├─Running Instance[0]: 1 reqs, Total # 4 NPUs, Each NPU Memory Usage 33655.77 MB (96.668 % Used)
+        └─Node[0]: Total CPU Memory Usage 0.00 MB, 0.000 % Used 
+--------------------------------------------------------------------------------
+[1m[96m▶ Exiting simulation...
+[0m[0m
+Checking Non-Exited Systems ...
+All Request Has Been Exited
+--------------------------------------------------------------------------------
+[1m[96m▶ Simulation results...
+[0m[0m
+Total simulation time: 0h 0m 8.834s
+--------------------------------------------------------------------------------
+[95m                               Throughput Results                               [0m
+--------------------------------------------------------------------------------
+Total requests:                                                     20
+Total clocks (ns):                                                  2549896200
+Total latency (s):                                                  2.550
+Total input tokens:                                                 291
+Total generated tokens:                                             630
+Request throughput (req/s):                                         7.84
+Average prompt throughput (tok/s):                                  114.12
+Average generation throughput (tok/s):                              247.07
+Total token throughput (tok/s):                                     361.19
+Throughput per 0.5 sec: [(216.0, 248.0), (366.0, 516.0), (0.0, 354.0), (0.0, 86.0), (0.0, 50.0)]
+--------------------------------------------------------------------------------
+[95m                                  Instance [0]                                  [0m
+--------------------------------------------------------------------------------
+------------------------------Time to First Token-------------------------------
+Mean TTFT (ms):                                                     30.25
+Median TTFT (ms):                                                   30.15
+P99 TTFT (ms):                                                      40.83
+--------------------Time per Output Token (excl. 1st token)---------------------
+Mean TPOT (ms):                                                     20.84
+Median TPOT (ms):                                                   20.87
+P99 TPOT (ms):                                                      21.02
+------------------------------Inter-token Latency-------------------------------
+Mean ITL (ms):                                                      20.77
+Median ITL (ms):                                                    20.79
+P99 ITL (ms):                                                       22.73
+----------------------------KV Cache Tier Statistics----------------------------
+NPU→CPU evictions:        0 events,       0.00 MB
+NPU→CXL evictions:        0 events,       0.00 MB
+CPU→NPU reloads:          0 events,       0.00 MB
+CXL→NPU reloads:          0 events,       0.00 MB
+NPU prefix evictions:     0 events,       0.00 MB
+Storage prefix evict:     0 events,       0.00 MB
+Storage→NPU prefix:       0 events,       0.00 MB
+Evicted→Storage:          0 events,       0.00 MB
+Total data moved:                                                    0.00 MB
+--------------------------------------------------------------------------------
+Saving each request's information to output file: output/tiered_kv/phaseE/70b_npu_cpu/prefix_stress/result.csv
+Saving tier stats to: /home/marvell/LLMServingSim/output/tiered_kv/phaseE/70b_npu_cpu/prefix_stress/result_tier_stats.json
+Saved time-series metrics to: output/tiered_kv/phaseE/70b_npu_cpu/prefix_stress/timeseries.csv
